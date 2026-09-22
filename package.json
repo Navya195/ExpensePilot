@@ -1,0 +1,20 @@
+{
+  "name": "smart-personal-expense-management-system",
+  "version": "1.0.0",
+  "description": "A full-stack personal expense management system built with **Core Java, Java Servlets, JDBC, MySQL, and vanilla HTML/CSS/JS** with **Chart.js** visualizations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "google-auth-library": "^11.0.2"
+  }
+}

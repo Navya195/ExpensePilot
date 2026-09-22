@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .sub-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s;
+        }
+        .sub-card:hover { transform: translateY(-3px); }
+        .sub-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .sub-info { flex: 1; }
+        .sub-name { margin: 0; font-size: 1.1rem; color: #fff; font-weight: 600; }
+        .sub-cycle { margin: 0; font-size: 0.85rem; color: #8b8fa3; margin-top: 0.2rem; }
+        .sub-amount { font-size: 1.1rem; font-weight: 700; color: #fff; text-align: right; }
+        .sub-next-date { font-size: 0.8rem; color: #8b8fa3; text-align: right; margin-top: 0.2rem; }
+        
+        .sub-summary {
+            background: rgba(85, 184, 130, 0.1);
+            border: 1px solid rgba(85, 184, 130, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+        }
+        .summary-item { text-align: center; }
+        .summary-value { font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .summary-label { color: #55b882; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item active"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Subscriptions & Bills</h1>
+                    <p class="text-muted text-sm mt-1">Manage your recurring payments in one place</p>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openSubModal()"><i class="fa-solid fa-plus"></i> Add Subscription</button>
+                </div>
+            </header>
+
+            <div class="sub-summary">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalActive">0</div>
+                    <div class="summary-label">Active Subs</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="monthlyTotal">₹0.00</div>
+                    <div class="summary-label">Monthly Cost</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="yearlyTotal">₹0.00</div>
+                    <div class="summary-label">Yearly Projection</div>
+                </div>
+            </div>
+
+            <div class="sub-grid" id="subsContainer">
+                <div class="text-muted">Loading subscriptions...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Sub Modal -->
+    <div id="subModal" class="modal">
+        <div class="modal-content premium-card" style="background: #12141c;">
+            <span class="close-modal" onclick="closeSubModal()">&times;</span>
+            <h2>Add Subscription</h2>
+            <form id="subForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Service Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Netflix" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Amount (₹)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Billing Cycle</label>
+                    <select name="cycle" class="form-control" required>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Next Billing Date</label>
+                    <input type="date" name="nextDate" class="form-control" required>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="closeSubModal()">Save Subscription</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSubscriptions();
+            setupLogout();
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function loadSubscriptions() {
+            // Mock data for SpendWise 2.0 Subscriptions
+            const subs = [
+                { name: 'Netflix', amount: 649, cycle: 'Monthly', nextDate: '2026-09-15', icon: 'fa-film', color: '#E50914' },
+                { name: 'Spotify Premium', amount: 119, cycle: 'Monthly', nextDate: '2026-09-05', icon: 'fa-music', color: '#1DB954' },
+                { name: 'Amazon Prime', amount: 1499, cycle: 'Yearly', nextDate: '2027-01-10', icon: 'fa-amazon', color: '#FF9900' },
+                { name: 'Gym Membership', amount: 2500, cycle: 'Monthly', nextDate: '2026-09-01', icon: 'fa-dumbbell', color: '#000000' }
+            ];
+
+            let monthlyCost = 0;
+            const container = document.getElementById('subsContainer');
+            
+            container.innerHTML = subs.map(s => {
+                const cost = s.cycle === 'Monthly' ? s.amount : s.amount / 12;
+                monthlyCost += cost;
+                
+                return `
+                <div class="sub-card">
+                    <div class="sub-logo" style="color: ${s.color};"><i class="fa-brands ${s.icon}"></i><i class="fa-solid ${s.icon}"></i></div>
+                    <div class="sub-info">
+                        <h3 class="sub-name">${s.name}</h3>
+                        <p class="sub-cycle">${s.cycle}</p>
+                    </div>
+                    <div>
+                        <div class="sub-amount">${formatCurrency(s.amount)}</div>
+                        <div class="sub-next-date">Next: ${new Date(s.nextDate).toLocaleDateString('en-US', {month:'short', day:'numeric'})}</div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            document.getElementById('totalActive').textContent = subs.length;
+            document.getElementById('monthlyTotal').textContent = formatCurrency(monthlyCost);
+            document.getElementById('yearlyTotal').textContent = formatCurrency(monthlyCost * 12);
+        }
+
+        function openSubModal() { document.getElementById('subModal').classList.add('active'); }
+        function closeSubModal() { document.getElementById('subModal').classList.remove('active'); }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>

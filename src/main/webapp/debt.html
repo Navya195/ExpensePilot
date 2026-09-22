@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debt & Net Worth - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .net-worth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(85, 184, 130, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+        .net-worth-value { font-size: 3rem; font-weight: 700; color: #fff; margin: 0.5rem 0; }
+        
+        .debt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .debt-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .debt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .debt-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 0; }
+        .debt-type { font-size: 0.8rem; color: #8b8fa3; text-transform: uppercase; letter-spacing: 1px; }
+        .debt-amount { font-size: 1.5rem; font-weight: 700; color: #e74c3c; margin: 0.5rem 0; }
+        .debt-details { display: flex; justify-content: space-between; font-size: 0.9rem; color: #8b8fa3; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+                <a href="debt.html" class="nav-item active"><i class="fa-solid fa-scale-balanced"></i> Debt & Net Worth</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Debt & Net Worth</h1>
+                    <p class="text-muted text-sm mt-1">Track your overall wealth and liabilities</p>
+                </div>
+            </header>
+
+            <div class="net-worth-header">
+                <div>
+                    <div class="text-muted text-sm text-uppercase">Total Net Worth</div>
+                    <div class="net-worth-value" id="totalNetWorth">₹0.00</div>
+                    <div class="text-success"><i class="fa-solid fa-arrow-trend-up"></i> +12% from last month</div>
+                </div>
+                <div style="display: flex; gap: 2rem; text-align: right;">
+                    <div>
+                        <div class="text-muted text-sm">Total Assets</div>
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #55b882;" id="totalAssets">₹0.00</div>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">Total Liabilities</div>
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #e74c3c;" id="totalLiabilities">₹0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; color: #fff;">Active Debts & Loans</h3>
+            <div class="debt-grid" id="debtContainer">
+                <div class="text-muted">Loading debts...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDebts();
+            setupLogout();
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function loadDebts() {
+            // Mock data for SpendWise 2.0 Debts
+            const debts = [
+                { name: 'HDFC Home Loan', type: 'Mortgage', amount: 4500000, interestRate: 8.5, minPayment: 42000 },
+                { name: 'ICICI Credit Card', type: 'Credit Card', amount: 45000, interestRate: 42.0, minPayment: 2250 },
+                { name: 'Car Loan', type: 'Auto Loan', amount: 350000, interestRate: 9.0, minPayment: 8500 }
+            ];
+
+            let totalLiabilities = 0;
+            const container = document.getElementById('debtContainer');
+            
+            container.innerHTML = debts.map(d => {
+                totalLiabilities += d.amount;
+                return `
+                <div class="debt-card">
+                    <div class="debt-header">
+                        <div>
+                            <h3 class="debt-title">${d.name}</h3>
+                            <div class="debt-type">${d.type}</div>
+                        </div>
+                        <div style="color: #e74c3c; font-size: 1.5rem;"><i class="fa-solid fa-building-columns"></i></div>
+                    </div>
+                    <div class="debt-amount">${formatCurrency(d.amount)}</div>
+                    <div class="debt-details">
+                        <div>APR: <strong style="color:#fff">${d.interestRate}%</strong></div>
+                        <div>Monthly: <strong style="color:#fff">${formatCurrency(d.minPayment)}</strong></div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Calculate Mock Net Worth
+            const totalAssets = 5340077; // Mock value for assets
+            document.getElementById('totalAssets').textContent = formatCurrency(totalAssets);
+            document.getElementById('totalLiabilities').textContent = formatCurrency(totalLiabilities);
+            document.getElementById('totalNetWorth').textContent = formatCurrency(totalAssets - totalLiabilities);
+        }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item active"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Transactions</h1>
+                    <p class="text-muted text-sm mt-1">Review and categorize your spending history</p>
+                </div>
+                
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="globalSearchInput" onkeypress="if(event.key === 'Enter') { this.dispatchEvent(new Event('input')); }" placeholder="Search transactions, merchants, categories...">
+                </div>
+
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openModal()"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+                    <button class="action-btn icon-btn"><i class="fa-regular fa-bell"></i></button>
+                    <div class="profile-btn"><i class="fa-solid fa-user"></i></div>
+                </div>
+            </header>
+
+            <!-- Filters Bar -->
+            <div class="flex-between mt-2" style="margin-bottom: 1.5rem;">
+                <div style="display: flex; gap: 1rem;">
+                    <select id="filterType" class="form-control" style="width: auto; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                        <option value="">All Types</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                    <select id="filterCategory" class="form-control" style="width: auto; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                        <option value="">All Categories</option>
+                        <option value="Food & Groceries">Food & Groceries</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills & Lifestyle">Bills & Lifestyle</option>
+                        <option value="Finance & Savings">Finance & Savings</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="date" id="filterDate" class="form-control" style="width: auto; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                </div>
+                
+                <div>
+                    <button class="btn btn-secondary" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="premium-card">
+                <div class="table-responsive">
+                    <table class="table tx-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th class="text-muted pl-1" style="text-align: left;">MERCHANT / DESCRIPTION</th>
+                                <th class="text-muted" style="text-align: left;">CATEGORY</th>
+                                <th class="text-muted" style="text-align: left;">DATE</th>
+                                <th class="text-muted" style="text-align: left;">ACCOUNT</th>
+                                <th class="text-muted pr-1" style="text-align: right;">AMOUNT</th>
+                                <th class="text-muted pr-1" style="text-align: right;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Transaction Modal -->
+    <div id="txModal" class="modal">
+        <div class="modal-content premium-card" style="background: #12141c;">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add Transaction</h2>
+            <form id="txForm">
+                <input type="hidden" name="transactionId" id="txId">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Type</label>
+                    <select name="type" id="txType" class="form-control" required>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Amount (₹)</label>
+                    <input type="number" step="0.01" name="amount" id="txAmount" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Category</label>
+                    <select name="category" id="txCategory" class="form-control" required>
+                        <option value="Food & Groceries">Food & Groceries</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills & Lifestyle">Bills & Lifestyle</option>
+                        <option value="Finance & Savings">Finance & Savings</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Salary">Salary (Income)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Date</label>
+                    <input type="date" name="date" id="txDate" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Description / Merchant</label>
+                    <input type="text" name="description" id="txDesc" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary" id="txSubmitBtn" style="width: 100%;">Save Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allTransactions = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.has('search')) {
+                document.getElementById('globalSearchInput').value = urlParams.get('search');
+            }
+            loadTransactions();
+            setupLogout();
+            document.getElementById('txDate').valueAsDate = new Date();
+
+            document.getElementById('globalSearchInput').addEventListener('input', filterTransactions);
+            document.getElementById('filterType').addEventListener('change', filterTransactions);
+            document.getElementById('filterCategory').addEventListener('change', filterTransactions);
+            document.getElementById('filterDate').addEventListener('change', filterTransactions);
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getCategoryIcon(category) {
+            const map = {
+                'Food & Groceries': '🍔',
+                'Transport': '🚗',
+                'Shopping': '🛍️',
+                'Bills & Lifestyle': '🧾',
+                'Finance & Savings': '💰',
+                'Travel': '✈️',
+                'Salary': '💵',
+                'Other': '📌'
+            };
+            return map[category] || '📌';
+        }
+
+        function loadTransactions() {
+            fetch('api/transactions')
+                .then(r => { if (r.status === 401) { window.location.href = 'login.html'; } return r.json(); })
+                .then(data => {
+                    allTransactions = data;
+                    filterTransactions();
+                })
+                .catch(err => console.error(err));
+        }
+
+        function renderTransactions(txs) {
+            const tbody = document.getElementById('transactionsTableBody');
+            if (!txs || txs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">No transactions found.</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = txs.map(t => {
+                const isIncome = t.type === 'income';
+                const sign = isIncome ? '+' : '-';
+                const colorClass = isIncome ? 'text-success' : '';
+                const merchant = t.description || t.category;
+                
+                return `
+                <tr>
+                    <td class="pl-1">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                ${getCategoryIcon(t.category)}
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">${merchant}</div>
+                                <div class="text-muted text-sm">${t.is_recurring ? '<i class="fa-solid fa-arrows-rotate" style="font-size:0.75rem;"></i> Recurring' : 'One-time'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-outline">${t.category}</span></td>
+                    <td class="text-muted">${new Date(t.date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</td>
+                    <td><span class="badge badge-secondary">Linked Account</span></td>
+                    <td class="text-right pr-1 ${colorClass}" style="font-weight: 600;">${sign}${formatCurrency(t.amount)}</td>
+                    <td class="text-right pr-1">
+                        <button class="btn btn-sm" onclick="editTransaction(${t.transactionId})" style="background:transparent; color:#8b8fa3; padding: 0.3rem;"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm" onclick="deleteTransaction(${t.transactionId})" style="background:transparent; color:#e74c3c; padding: 0.3rem;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function filterTransactions() {
+            const search = document.getElementById('globalSearchInput').value.toLowerCase();
+            const type = document.getElementById('filterType').value;
+            const category = document.getElementById('filterCategory').value;
+            const date = document.getElementById('filterDate').value;
+
+            let filtered = allTransactions.filter(t => {
+                let match = true;
+                if (search) match = match && ((t.description || '').toLowerCase().includes(search) || t.category.toLowerCase().includes(search));
+                if (type) match = match && t.type === type;
+                if (category) match = match && t.category === category;
+                if (date) match = match && t.date.startsWith(date);
+                return match;
+            });
+            renderTransactions(filtered);
+        }
+
+        function openModal(tx = null) {
+            const modal = document.getElementById('txModal');
+            modal.classList.add('active');
+            if (tx) {
+                document.getElementById('modalTitle').textContent = 'Edit Transaction';
+                document.getElementById('txId').value = tx.transactionId;
+                document.getElementById('txType').value = tx.type;
+                document.getElementById('txAmount').value = tx.amount;
+                document.getElementById('txCategory').value = tx.category;
+                document.getElementById('txDate').value = tx.date;
+                document.getElementById('txDesc').value = tx.description || '';
+                document.getElementById('txSubmitBtn').textContent = 'Update Transaction';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Add Transaction';
+                document.getElementById('txForm').reset();
+                document.getElementById('txId').value = '';
+                document.getElementById('txDate').valueAsDate = new Date();
+                document.getElementById('txSubmitBtn').textContent = 'Save Transaction';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('txModal').classList.remove('active');
+        }
+
+        function editTransaction(id) {
+            const tx = allTransactions.find(t => t.transactionId === id);
+            if (tx) openModal(tx);
+        }
+
+        function deleteTransaction(id) {
+            if (!confirm('Are you sure you want to delete this transaction?')) return;
+            fetch('api/transactions?id=' + id, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(data => { if (data.success) loadTransactions(); else alert(data.error); })
+                .catch(err => alert('Error: ' + err.message));
+        }
+
+        document.getElementById('txForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const txId = document.getElementById('txId').value;
+            const formData = new URLSearchParams(new FormData(this));
+            const isEdit = txId && txId.length > 0;
+
+            fetch('api/transactions', {
+                method: isEdit ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                    loadTransactions();
+                } else {
+                    alert(data.error || 'Failed');
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        });
+
+        document.getElementById('txModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+        
+        function exportCSV() {
+            // simple CSV export logic
+            let csvContent = "data:text/csv;charset=utf-8,Date,Type,Category,Merchant,Amount\n";
+            allTransactions.forEach(t => {
+                let row = `${t.date},${t.type},${t.category},"${t.description || ''}",${t.amount}`;
+                csvContent += row + "\n";
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "transactions.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

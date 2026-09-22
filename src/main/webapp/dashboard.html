@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SpendWise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/extras.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active" id="nav-item-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Global Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h2 id="greeting">Good day 👋</h2>
+                    <p class="text-muted" id="userNameLabel">Here's your financial overview</p>
+                </div>
+                
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search transactions, merchants, categories..." id="globalSearch">
+                </div>
+
+                <div class="header-actions">
+                    <!-- Date Range Filter -->
+                    <div class="date-filter-wrap" style="margin-right: 0.5rem;">
+                        <select id="dateRangeFilter" class="form-control" style="padding: 0.45rem 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; cursor: pointer;">
+                            <option value="this_month" selected>This Month</option>
+                            <option value="today">Today</option>
+                            <option value="this_week">This Week</option>
+                            <option value="last_month">Last Month</option>
+                            <option value="all_time">All Time</option>
+                        </select>
+                    </div>
+
+                    <div class="notification-container" id="notifContainer">
+                        <div class="notification-icon" id="notifBell" onclick="toggleNotifications(event)">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                        </div>
+                        <div class="notification-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="mark-all-btn" onclick="markAllAlertsRead()">Mark read</button>
+                                    <button class="mark-all-btn text-danger" onclick="clearAllNotifications()">Clear</button>
+                                </div>
+                            </div>
+                            <div class="notif-body" id="notifBody">
+                                <p class="text-muted text-center mt-2">No new notifications</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddTransactionModal()">+ Add Transaction</button>
+                    <div class="user-avatar" onclick="window.location.href='profile.html'" style="cursor: pointer;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 💰 TOP FINANCIAL OVERVIEW -->
+            <div class="snapshot-section" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="card safe-to-spend-card premium-card">
+                    <div class="safe-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">💰 Safe to Spend Today</h3>
+                        <span id="safeStatusBadge" class="badge-status badge-on-track" style="font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">🟢 On Track</span>
+                    </div>
+                    <h1 id="safeToSpendAmount" style="margin: 0.6rem 0 0.2rem 0; font-size: 2.2rem;">₹0.00</h1>
+                    <p class="text-muted text-sm" style="margin-bottom: 0.8rem;" id="safeToSpendSubtitle">Based on your current budget, spending pattern, and upcoming expenses.</p>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <button type="button" class="btn-calc-info" onclick="openSafeToSpendModal()" style="background: transparent; border: none; color: #55b882; cursor: pointer; font-size: 0.82rem; font-weight: 600; padding: 0; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-solid fa-circle-info"></i> How is this calculated?
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card money-snapshot-card premium-card">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.15rem; color: #fff;">Money Snapshot</h3>
+                    <div class="snapshot-grid">
+                        <div class="snapshot-item">
+                            <span class="text-muted text-sm">Income</span>
+                            <h4 class="text-success" id="snapIncome">₹0.00</h4>
+                        </div>
+                        <div class="snapshot-item">
+                            <span class="text-muted text-sm">Spent</span>
+                            <h4 class="text-danger" id="snapSpent">₹0.00</h4>
+                        </div>
+                        <div class="snapshot-item">
+                            <span class="text-muted text-sm">Saved</span>
+                            <h4 class="text-info" id="snapSaved">₹0.00</h4>
+                        </div>
+                        <div class="snapshot-item">
+                            <span class="text-muted text-sm">Invested</span>
+                            <h4 class="text-primary" id="snapInvested">₹0.00</h4>
+                        </div>
+                    </div>
+                    <div class="snapshot-progress mt-2">
+                        <div class="progress-header">
+                            <span>Savings Rate</span>
+                            <span id="snapSavingsRate">0%</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="snapSavingsBar" style="width: 0%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 💳 6 SUMMARY METRIC CARDS -->
+            <div class="summary-cards" style="margin-bottom: 2rem;">
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-primary-light"><i class="fa-solid fa-wallet text-primary"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Total Balance</p>
+                        <h3 class="card-amount" id="totalBalance">₹0.00</h3>
+                    </div>
+                </div>
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-success-light"><i class="fa-solid fa-arrow-trend-up text-success"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Monthly Income</p>
+                        <h3 class="card-amount text-success" id="monthlyIncome">₹0.00</h3>
+                    </div>
+                </div>
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-danger-light"><i class="fa-solid fa-arrow-trend-down text-danger"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Monthly Expense</p>
+                        <h3 class="card-amount text-danger" id="monthlyExpense">₹0.00</h3>
+                    </div>
+                </div>
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-info-light"><i class="fa-solid fa-money-bill-wave text-info"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Available to Spend</p>
+                        <h3 class="card-amount text-info" id="availableToSpend">₹0.00</h3>
+                    </div>
+                </div>
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-primary-light"><i class="fa-solid fa-piggy-bank text-primary"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Total Savings</p>
+                        <h3 class="card-amount text-primary" id="totalSavings">₹0.00</h3>
+                    </div>
+                </div>
+                <div class="card summary-card premium-card">
+                    <div class="card-icon bg-success-light"><i class="fa-solid fa-landmark text-success"></i></div>
+                    <div class="card-info">
+                        <p class="card-label">Net Worth</p>
+                        <h3 class="card-amount text-success" id="netWorth">₹0.00</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 💡 DASHBOARD INSIGHTS UNIFIED CARD -->
+            <div class="card premium-card dashboard-insights-card" id="dashboard-insights" style="margin-bottom: 2rem;">
+                <!-- Main Header -->
+                <div class="dashboard-insights-main-header">
+                    <div>
+                        <h2 class="main-title"><i class="fa-solid fa-lightbulb text-primary"></i> Dashboard Insights</h2>
+                        <p class="text-muted text-sm" style="margin-top: 0.3rem;">Personalized AI Financial Intelligence & Predictive Analytics</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-insights-body">
+                    <!-- Clean Vertical Subheading Navigation Menu -->
+                    <div class="insights-subheading-nav" id="insightsSubnav">
+                        <div class="subheading-item active" data-target="financial-time-machine" onclick="showInsightPanel('financial-time-machine')">
+                            <i class="fa-solid fa-wand-magic-sparkles text-primary"></i>
+                            <span>Financial Time Machine</span>
+                        </div>
+                        <div class="subheading-item" data-target="financial-futures" onclick="showInsightPanel('financial-futures')">
+                            <i class="fa-solid fa-compass text-success"></i>
+                            <span>Explore Your Financial Future</span>
+                        </div>
+                        <div class="subheading-item" data-target="best-time-to-spend" onclick="showInsightPanel('best-time-to-spend')">
+                            <i class="fa-solid fa-clock text-warning"></i>
+                            <span>Best Time to Spend</span>
+                        </div>
+                        <div class="subheading-item" data-target="ai-discovered-patterns" onclick="showInsightPanel('ai-discovered-patterns')">
+                            <i class="fa-solid fa-brain text-info"></i>
+                            <span>AI Discovered Patterns</span>
+                        </div>
+                        <div class="subheading-item" data-target="smart-financial-health" onclick="showInsightPanel('smart-financial-health')">
+                            <i class="fa-solid fa-heart-pulse text-danger"></i>
+                            <span>Smart Financial Health</span>
+                        </div>
+                        <div class="subheading-item" data-target="monthly-comparison" onclick="showInsightPanel('monthly-comparison')">
+                            <i class="fa-solid fa-chart-column text-primary"></i>
+                            <span>What Changed This Month?</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Panels Content Area -->
+                    <div class="insights-panel-content">
+                        <!-- 1. FINANCIAL TIME MACHINE -->
+                        <div class="insight-panel-view active" id="panel-financial-time-machine">
+                            <div class="card-header-flex" style="margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="margin:0; font-size: 1.2rem; color: #fff;"><i class="fa-solid fa-wand-magic-sparkles text-primary" style="margin-right: 0.5rem;"></i> Financial Time Machine</h3>
+                                    <p class="text-muted text-sm mt-1">See how a financial decision could affect your future.</p>
+                                </div>
+                            </div>
+
+                            <div class="tm-input-wrap" id="tmInputWrap">
+                                <label for="tmSimulateAmount">What if I spend ₹</label>
+                                <input type="number" id="tmSimulateAmount" class="tm-amount-input" value="10000" min="0" step="500" oninput="runTimeMachineSimulation()">
+                                <button class="tm-simulate-btn" onclick="runTimeMachineSimulation()"><i class="fa-solid fa-bolt"></i> SIMULATE FUTURE</button>
+                            </div>
+
+                            <div id="tmMainContainer">
+                                <!-- Dynamic Scenario Boxes -->
+                            </div>
+                            
+                            <div style="margin-top: 0.8rem; font-size: 0.75rem; color: #6b7280; text-align: right;">
+                                <i class="fa-solid fa-circle-info"></i> *All values calculated dynamically from your linked accounts and spending history.
+                            </div>
+                        </div>
+
+                        <!-- 2. EXPLORE YOUR FINANCIAL FUTURE -->
+                        <div class="insight-panel-view" id="panel-financial-futures">
+                            <div class="card-header-flex" style="margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.2rem; color: #fff;"><i class="fa-solid fa-compass text-success" style="margin-right: 0.5rem;"></i> Explore Your Financial Future</h3>
+                                    <p class="text-muted text-sm mt-1">Simulate 30-day, 90-day, and 1-year wealth trajectories under 3 spending decisions.</p>
+                                </div>
+                            </div>
+
+                            <div class="futures-tabs">
+                                <div class="futures-tab" id="futTabSave" onclick="selectFutureTrajectory('save')">
+                                    <div class="futures-tab-title" style="color: #2ecc71;">🟢 SAVE MORE</div>
+                                    <div class="futures-tab-desc">Save ₹5,000 extra/month</div>
+                                </div>
+                                <div class="futures-tab active" id="futTabCurrent" onclick="selectFutureTrajectory('current')">
+                                    <div class="futures-tab-title" style="color: #f1c40f;">🟡 CURRENT PATH</div>
+                                    <div class="futures-tab-desc">Continue current spending</div>
+                                </div>
+                                <div class="futures-tab" id="futTabSpend" onclick="selectFutureTrajectory('spend')">
+                                    <div class="futures-tab-title" style="color: #e74c3c;">🔴 SPEND MORE</div>
+                                    <div class="futures-tab-desc">Spend ₹5,000 extra/month</div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; background: rgba(0,0,0,0.3); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1.2rem;">
+                                <div>
+                                    <span class="text-muted text-sm">30-Day Balance</span>
+                                    <h4 style="margin: 0.3rem 0 0 0; color: #fff;" id="fut30Day">₹0.00</h4>
+                                </div>
+                                <div>
+                                    <span class="text-muted text-sm">90-Day Balance</span>
+                                    <h4 style="margin: 0.3rem 0 0 0; color: #fff;" id="fut90Day">₹0.00</h4>
+                                </div>
+                                <div>
+                                    <span class="text-muted text-sm">1-Year Balance</span>
+                                    <h4 style="margin: 0.3rem 0 0 0; color: #fff;" id="fut1Year">₹0.00</h4>
+                                </div>
+                                <div>
+                                    <span class="text-muted text-sm">Goal Progress</span>
+                                    <h4 style="margin: 0.3rem 0 0 0; color: #55b882;" id="futGoalProgress">0%</h4>
+                                </div>
+                                <div>
+                                    <span class="text-muted text-sm">Goal Completion</span>
+                                    <h4 style="margin: 0.3rem 0 0 0; color: #fff;" id="futGoalDate">--</h4>
+                                </div>
+                            </div>
+
+                            <div class="futures-chart-container">
+                                <canvas id="futuresChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 3. BEST TIME TO SPEND & FINANCIAL TWIN -->
+                        <div class="insight-panel-view" id="panel-best-time-to-spend">
+                            <div class="twin-spend-grid" style="margin-bottom: 0;">
+                                <div class="premium-card-inner">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin:0; font-size: 1.15rem;"><i class="fa-solid fa-clock text-warning" style="margin-right: 0.5rem;"></i> Best Time to Spend</h3>
+                                        <span class="text-muted text-sm">Smart Purchase Timing</span>
+                                    </div>
+                                    
+                                    <div style="display: flex; gap: 0.8rem; align-items: center; margin-bottom: 1rem;">
+                                        <span class="text-sm text-muted">Purchase: ₹</span>
+                                        <input type="number" id="bestTimeAmount" value="20000" min="0" step="1000" class="form-control" style="width: 150px; padding: 0.4rem 0.8rem; border-radius: 8px;" oninput="calculateBestTimeToSpend()">
+                                    </div>
+
+                                    <div class="timeframe-pill-grid">
+                                        <div class="timeframe-pill">
+                                            <div class="timeframe-label">TODAY</div>
+                                            <div class="impact-badge badge-high" id="impactToday">🔴 High Impact</div>
+                                        </div>
+                                        <div class="timeframe-pill">
+                                            <div class="timeframe-label">10 DAYS LATER</div>
+                                            <div class="impact-badge badge-med" id="impact10Days">🟡 Medium Impact</div>
+                                        </div>
+                                        <div class="timeframe-pill">
+                                            <div class="timeframe-label">24 DAYS LATER</div>
+                                            <div class="impact-badge badge-low" id="impact24Days">🟢 Low Impact</div>
+                                        </div>
+                                    </div>
+
+                                    <div style="background: rgba(85, 184, 130, 0.1); border: 1px solid rgba(85, 184, 130, 0.3); border-radius: 10px; padding: 0.9rem; margin-top: 1rem;">
+                                        <div style="font-weight: 700; color: #55b882; margin-bottom: 0.3rem;" id="recTimeHeading">Recommended time: 24 days later</div>
+                                        <p style="margin:0; font-size: 0.83rem; color: #c5cad6; line-height: 1.4;" id="recTimeExplanation">
+                                            Based on your current spending pattern, upcoming bills, and income cycle, waiting until after your next salary reduces financial risk.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="premium-card-inner">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin:0; font-size: 1.15rem;"><i class="fa-solid fa-brain text-primary" style="margin-right: 0.5rem;"></i> YOUR FINANCIAL TWIN</h3>
+                                        <button class="action-btn" onclick="openScoreBreakdownModal()" style="font-size: 0.75rem; padding: 0.3rem 0.7rem;"><i class="fa-solid fa-circle-question"></i> WHY THIS SCORE?</button>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px;">
+                                            <span class="text-muted text-sm">Financial Health</span>
+                                            <h3 style="margin: 0.3rem 0 0 0; color: #55b882;" id="twinScore">-- / 100</h3>
+                                        </div>
+                                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px;">
+                                            <span class="text-muted text-sm">Savings Rate</span>
+                                            <h3 style="margin: 0.3rem 0 0 0; color: #3498db;" id="twinSavingsRate">0%</h3>
+                                        </div>
+                                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px;">
+                                            <span class="text-muted text-sm">Avg Daily Spending</span>
+                                            <h3 style="margin: 0.3rem 0 0 0; color: #f1c40f;" id="twinAvgDaily">₹0.00</h3>
+                                        </div>
+                                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px;">
+                                            <span class="text-muted text-sm">Safe to Spend</span>
+                                            <h3 style="margin: 0.3rem 0 0 0; color: #2ecc71;" id="twinSafeSpend">₹0.00</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. AI DISCOVERED PATTERNS -->
+                        <div class="insight-panel-view" id="panel-ai-discovered-patterns">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="margin: 0; font-size: 1.2rem; color: #fff;"><i class="fa-solid fa-brain text-info" style="margin-right: 0.5rem;"></i> AI Discovered Patterns</h3>
+                                <span class="text-muted text-sm">Real Transaction Intelligence</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;" id="aiDiscoveredGrid">
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px; display: flex; align-items: flex-start; gap: 0.8rem;">
+                                    <i class="fa-solid fa-calendar-week text-primary" style="font-size: 1.3rem; margin-top: 0.2rem;"></i>
+                                    <div>
+                                        <h4 style="margin:0 0 0.3rem 0; font-size: 0.95rem;">Weekend Spending Pattern</h4>
+                                        <p class="text-muted text-sm" style="margin:0;" id="aiPatternWeekend">Analyzing transaction history...</p>
+                                    </div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px; display: flex; align-items: flex-start; gap: 0.8rem;">
+                                    <i class="fa-solid fa-chart-simple text-success" style="font-size: 1.3rem; margin-top: 0.2rem;"></i>
+                                    <div>
+                                        <h4 style="margin:0 0 0.3rem 0; font-size: 0.95rem;">Monthly Expense Velocity</h4>
+                                        <p class="text-muted text-sm" style="margin:0;" id="aiPatternCycle">Analyzing spending velocity...</p>
+                                    </div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1rem; border-radius: 10px; display: flex; align-items: flex-start; gap: 0.8rem;">
+                                    <i class="fa-solid fa-repeat text-warning" style="font-size: 1.3rem; margin-top: 0.2rem;"></i>
+                                    <div>
+                                        <h4 style="margin:0 0 0.3rem 0; font-size: 0.95rem;">Active Subscriptions</h4>
+                                        <p class="text-muted text-sm" style="margin:0;" id="aiPatternSubs">Analyzing recurring bills...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. SMART FINANCIAL HEALTH -->
+                        <div class="insight-panel-view" id="panel-smart-financial-health">
+                            <div class="health-forecast-section">
+                                <div class="health-card premium-card-inner">
+                                    <div class="card-header-flex">
+                                        <h3><i class="fa-solid fa-heart-pulse text-success" style="margin-right: 0.5rem;"></i> Smart Financial Health</h3>
+                                        <h3 class="text-success"><span id="spendwiseScoreVal">0</span> / 100</h3>
+                                    </div>
+                                    <div class="health-factors-grid mt-2" id="healthFactors">
+                                        <div class="health-factor"><span class="text-muted">Budgeting</span><strong id="hf-budget">0</strong></div>
+                                        <div class="health-factor"><span class="text-muted">Savings</span><strong id="hf-savings">0</strong></div>
+                                        <div class="health-factor"><span class="text-muted">Spending</span><strong id="hf-spending">0</strong></div>
+                                        <div class="health-factor"><span class="text-muted">Emergency Fund</span><strong id="hf-emergency">0</strong></div>
+                                        <div class="health-factor"><span class="text-muted">Debt</span><strong id="hf-debt">0</strong></div>
+                                        <div class="health-factor"><span class="text-muted">Subscriptions</span><strong id="hf-subs">0</strong></div>
+                                    </div>
+                                    <div class="health-info mt-2">
+                                        <p id="scoreExplanation">Loading health insights...</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="forecast-card premium-card-inner">
+                                    <h3><i class="fa-solid fa-chart-line text-primary" style="margin-right: 0.5rem;"></i> 30-Day Cash Flow Forecast</h3>
+                                    <div class="forecast-content">
+                                        <i class="fa-solid fa-chart-line text-primary" style="font-size: 2rem;"></i>
+                                        <div>
+                                            <p class="text-muted">Expected Balance in 30 days</p>
+                                            <h2 id="cashFlowForecast">₹0.00</h2>
+                                        </div>
+                                    </div>
+                                    <div class="forecast-breakdown mt-2">
+                                        <div class="flex-between"><span class="text-muted text-sm">Expected Income</span><span class="text-success text-sm" id="cf-income">+₹0.00</span></div>
+                                        <div class="flex-between"><span class="text-muted text-sm">Upcoming Bills</span><span class="text-danger text-sm" id="cf-bills">-₹0.00</span></div>
+                                        <div class="flex-between"><span class="text-muted text-sm">Expected Spending</span><span class="text-danger text-sm" id="cf-spend">-₹0.00</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. WHAT CHANGED THIS MONTH? -->
+                        <div class="insight-panel-view" id="panel-monthly-comparison">
+                            <div class="card-header-flex" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.2rem; color: #fff;"><i class="fa-solid fa-chart-column text-primary" style="margin-right: 0.5rem;"></i> What Changed This Month?</h3>
+                                    <p class="text-muted text-sm" style="margin-top: 0.2rem;" id="monthlyComparisonSub">Comparing real current month data with previous month data.</p>
+                                </div>
+                                <span class="badge-pill" id="comparisonPeriodBadge" style="background: rgba(85, 184, 130, 0.15); color: #55b882; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Current vs Previous Month</span>
+                            </div>
+
+                            <!-- Dynamic AI Real-Data Insight Box -->
+                            <div id="comparisonInsightBox" style="background: rgba(85, 184, 130, 0.08); border-left: 4px solid #55b882; border-radius: 8px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+                                <i class="fa-solid fa-sparkles text-success" style="margin-right: 0.4rem;"></i> Loading comparison insights...
+                            </div>
+
+                            <!-- Comparison Table / Grid -->
+                            <div id="comparisonContainer" class="table-responsive">
+                                <table class="table comparison-table" style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left;">
+                                            <th style="padding: 0.8rem 1rem; color: #8b8fa3; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">CATEGORY / METRIC</th>
+                                            <th style="padding: 0.8rem 1rem; color: #8b8fa3; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; text-align: right;" id="thCurrMonth">CURRENT MONTH</th>
+                                            <th style="padding: 0.8rem 1rem; color: #8b8fa3; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; text-align: right;" id="thPrevMonth">PREVIOUS MONTH</th>
+                                            <th style="padding: 0.8rem 1rem; color: #8b8fa3; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; text-align: right;">DIFFERENCE</th>
+                                            <th style="padding: 0.8rem 1rem; color: #8b8fa3; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; text-align: center;">CHANGE (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="comparisonTableBody">
+                                        <tr><td colspan="5" class="text-center text-muted p-3">Calculating monthly comparison from database...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📜 RECENT TRANSACTIONS & CATEGORY BREAKDOWN -->
+            <div class="bottom-section" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="card recent-tx-card premium-card">
+                    <div class="card-header-flex">
+                        <h3>Recent Transactions</h3>
+                        <a href="transactions.html" class="view-all">View All</a>
+                    </div>
+                    <div class="table-responsive mt-1">
+                        <table class="table tx-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-muted text-sm text-left pl-1">MERCHANT / DESC</th>
+                                    <th class="text-muted text-sm text-left">CATEGORY</th>
+                                    <th class="text-muted text-sm text-left">DATE</th>
+                                    <th class="text-muted text-sm text-left">PAYMENT METHOD</th>
+                                    <th class="text-muted text-sm text-left">TYPE</th>
+                                    <th class="text-muted text-sm text-right pr-1">AMOUNT</th>
+                                    <th class="text-muted text-sm text-center">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactionsTable">
+                                <tr><td colspan="7" class="text-center loading">Loading transactions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Category Spending Breakdown -->
+                <div class="card category-spending-card premium-card">
+                    <div class="card-header-flex" style="margin-bottom: 1rem;">
+                        <h3><i class="fa-solid fa-chart-pie text-primary"></i> Category Spending</h3>
+                    </div>
+                    <div id="categorySpendingList" style="display: flex; flex-direction: column; gap: 0.9rem;">
+                        <p class="text-muted text-center text-sm">Calculating category spending...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Ask SpendWise Button -->
+    <div class="floating-chat-btn" id="openChatBtn">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Ask SpendWise
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3><i class="fa-solid fa-robot"></i> SpendWise AI Assistant</h3>
+            <button class="close-chat" id="closeChatBtn">&times;</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message bot-message">
+                Hello! I'm your SpendWise AI assistant. I can help you analyze your spending, suggest budgets, or answer questions about your finances. How can I help you today?
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" placeholder="Ask about your finances...">
+            <button id="sendChatBtn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Add / Edit Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content card premium-card" style="max-width: 480px;">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalTxTitle">Add Transaction</h2>
+            <form id="addTransactionForm">
+                <input type="hidden" name="txId" id="txId">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="type" id="txType" class="form-control" required>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" step="0.01" min="0.01" name="amount" id="txAmount" class="form-control" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" id="txCategory" class="form-control" required>
+                        <option value="Food & Groceries">Food & Groceries</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills & Lifestyle">Bills & Lifestyle</option>
+                        <option value="Finance & Savings">Finance & Savings</option>
+                        <option value="Salary">Salary (Income)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Merchant / Payee</label>
+                    <input type="text" name="merchantName" id="txMerchant" class="form-control" placeholder="e.g. Swiggy, Uber, Amazon">
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select name="paymentMethod" id="txPaymentMethod" class="form-control">
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" class="form-control" required id="txDate">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" name="description" id="txDescription" class="form-control" placeholder="e.g. Dinner with friends">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <input type="text" name="notes" id="txNotes" class="form-control" placeholder="Optional notes">
+                </div>
+                <button type="submit" class="btn btn-primary" id="txSubmitBtn">Save Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Score Breakdown Modal -->
+    <div id="scoreBreakdownModal" class="modal">
+        <div class="modal-content card premium-card" style="max-width: 500px; padding: 2rem; border-radius: 16px;">
+            <span class="close-modal" onclick="closeScoreBreakdownModal()">&times;</span>
+            <h2 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-brain text-primary"></i> Financial Twin Score Breakdown</h2>
+            <p class="text-muted text-sm mb-3">Here is how your SpendWise Financial Twin calculates your overall health score (out of 100):</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;" id="scoreBreakdownList">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Savings Rate (≥30% income)</span>
+                    <strong style="color:#55b882;">40 / 40 pts</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Budget Adherence (Within limits)</span>
+                    <strong style="color:#55b882;">30 / 30 pts</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Account Balance Stability</span>
+                    <strong style="color:#55b882;">20 / 20 pts</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Subscriptions & Fixed Expenses</span>
+                    <strong style="color:#55b882;">10 / 10 pts</strong>
+                </div>
+            </div>
+
+            <button class="btn btn-primary mt-3" onclick="closeScoreBreakdownModal()" style="width: 100%; border-radius: 8px;">Got It</button>
+        </div>
+    </div>
+
+    <!-- Safe to Spend Calculation Modal -->
+    <div id="safeToSpendModal" class="modal">
+        <div class="modal-content card premium-card" style="max-width: 520px; padding: 2rem; border-radius: 16px;">
+            <span class="close-modal" onclick="closeSafeToSpendModal()">&times;</span>
+            <h2 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-calculator text-success"></i> Safe to Spend Breakdown</h2>
+            <p class="text-muted text-sm mb-3">Here is how your daily safe spending capacity was computed using your database records:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;" id="safeBreakdownList">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-muted">Total Available Balance</span>
+                    <strong id="sbTotalBalance" style="color: #fff;">₹0.00</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-muted">Upcoming Subscriptions & Bills</span>
+                    <strong id="sbUpcomingSubs" class="text-danger">-₹0.00</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-muted">Monthly Goal Allocations</span>
+                    <strong id="sbGoalContrib" class="text-danger">-₹0.00</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-muted">Remaining Monthly Budget</span>
+                    <strong id="sbRemainingBudget" style="color: #3498db;">Unconstrained</strong>
+                </div>
+                <div style="background: rgba(85, 184, 130, 0.1); border: 1px solid rgba(85, 184, 130, 0.3); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; color: #55b882;">Available Safe Pool</span>
+                    <strong id="sbSafePool" style="color: #55b882; font-size: 1.05rem;">₹0.00</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-muted">Days Remaining in Month</span>
+                    <strong id="sbDaysRemaining" style="color: #fff;">0 days</strong>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); padding: 0.9rem; border-radius: 8px; margin-top: 1rem; font-size: 0.83rem; color: #a0aec0; text-align: center;" id="sbFormulaText">
+                Formula: Available Safe Pool ÷ Days Remaining = Safe to Spend Today
+            </div>
+
+            <button class="btn btn-primary mt-3" onclick="closeSafeToSpendModal()" style="width: 100%; border-radius: 8px;">Got It</button>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

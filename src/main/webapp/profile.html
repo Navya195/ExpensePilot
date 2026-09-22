@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - SpendWise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">`n    <link rel="stylesheet" href="css/extras.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand sidebar-brand"><div class="brand-icon"></div><span>SpendWise</span></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h2>Profile</h2>
+                    <p class="text-muted">Your account details and financial overview</p>
+                </div>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Profile Card -->
+                <div class="card profile-card">
+                    <div class="profile-avatar" id="profileAvatar">?</div>
+                    <h3 id="profileName">Loading...</h3>
+                    <p id="profileEmail" class="text-muted">Loading...</p>
+                    <p id="profileJoined" class="text-muted" style="font-size:0.8rem; margin-top:0.3rem;"></p>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <h4 id="statTransactions">0</h4>
+                            <p class="text-muted">Transactions</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 id="statBudgets">0</h4>
+                            <p class="text-muted">Budgets</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 id="statGoals">0</h4>
+                            <p class="text-muted">Goals</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 id="statScore" class="text-primary">--</h4>
+                            <p class="text-muted">Score</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="margin-top:1.5rem; width:100%;" onclick="document.getElementById('logoutBtn').click()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+
+                <!-- Financial Summary -->
+                <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                    <div class="card">
+                        <h3 style="margin-bottom:1.25rem;"><i class="fa-solid fa-chart-line text-primary"></i> Financial Summary</h3>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <p class="text-muted" style="font-size:0.85rem; margin-bottom:0.3rem;">Total Income (All Time)</p>
+                                <h4 class="amount-income" id="sumIncome">$0.00</h4>
+                            </div>
+                            <div>
+                                <p class="text-muted" style="font-size:0.85rem; margin-bottom:0.3rem;">Total Expenses (All Time)</p>
+                                <h4 class="amount-expense" id="sumExpense">$0.00</h4>
+                            </div>
+                            <div>
+                                <p class="text-muted" style="font-size:0.85rem; margin-bottom:0.3rem;">Net Balance</p>
+                                <h4 id="sumBalance">$0.00</h4>
+                            </div>
+                            <div>
+                                <p class="text-muted" style="font-size:0.85rem; margin-bottom:0.3rem;">Monthly Savings Rate</p>
+                                <h4 id="sumSavingsRate" class="text-primary">0%</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SpendWise Score Card -->
+                    <div class="card">
+                        <h3 style="margin-bottom:1rem;"><i class="fa-solid fa-star text-warning"></i> SpendWise Financial Score</h3>
+                        <div style="display:flex; align-items:center; gap:2rem;">
+                            <div style="text-align:center;">
+                                <div style="font-size:4rem; font-weight:800; color:var(--primary-color);" id="bigScore">--</div>
+                                <div style="font-size:0.85rem; color:var(--text-muted);">out of 100</div>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="progress-bar-bg" style="height:12px; margin-bottom:0.5rem;">
+                                    <div class="progress-bar safe" id="scoreBar" style="width:0%; transition: width 1s ease;"></div>
+                                </div>
+                                <p id="scoreLabel" style="font-size:0.9rem; color:var(--text-muted);">Loading your score...</p>
+                                <ul style="margin-top:1rem; list-style:none; display:flex; flex-direction:column; gap:0.4rem;">
+                                    <li style="font-size:0.85rem; color:#888;"><i class="fa-solid fa-circle-check text-success"></i> &nbsp;40 pts — Savings rate ≥ 30%</li>
+                                    <li style="font-size:0.85rem; color:#888;"><i class="fa-solid fa-circle-check text-success"></i> &nbsp;30 pts — All budgets on track</li>
+                                    <li style="font-size:0.85rem; color:#888;"><i class="fa-solid fa-circle-check text-success"></i> &nbsp;30 pts — Positive net balance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Info -->
+                    <div class="card">
+                        <h3 style="margin-bottom:1.25rem;"><i class="fa-solid fa-shield-halved text-primary"></i> Account Security</h3>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                            <div style="display:flex; align-items:center; gap:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:10px;">
+                                <i class="fa-solid fa-lock text-primary"></i>
+                                <div>
+                                    <p style="font-size:0.9rem; font-weight:500;">Password Protected</p>
+                                    <p style="font-size:0.8rem; color:var(--text-muted);">Your account is secured with a password</p>
+                                </div>
+                                <i class="fa-solid fa-circle-check text-success" style="margin-left:auto;"></i>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:10px;">
+                                <i class="fa-solid fa-database text-info"></i>
+                                <div>
+                                    <p style="font-size:0.9rem; font-weight:500;">Data Stored Locally</p>
+                                    <p style="font-size:0.8rem; color:var(--text-muted);">All data is in your own MySQL database</p>
+                                </div>
+                                <i class="fa-solid fa-circle-check text-success" style="margin-left:auto;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            setupLogout();
+        });
+
+        function loadProfile() {
+            fetch('api/dashboard')
+                .then(r => { if (r.status === 401) { window.location.href = 'login.html'; } return r.json(); })
+                .then(data => {
+                    // Avatar & Name
+                    const name = data.userName || 'User';
+                    document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+                    document.getElementById('profileName').textContent = name;
+
+                    // Financial summary
+                    const totalIncome = data.monthlyIncome || 0; // using monthly for display
+                    const totalExpense = data.monthlyExpense || 0;
+                    document.getElementById('sumIncome').textContent = '$' + (data.monthlyIncome || 0).toFixed(2);
+                    document.getElementById('sumExpense').textContent = '$' + (data.monthlyExpense || 0).toFixed(2);
+                    document.getElementById('sumBalance').textContent = '$' + (data.totalBalance || 0).toFixed(2);
+
+                    const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100) : 0;
+                    document.getElementById('sumSavingsRate').textContent = savingsRate.toFixed(1) + '%';
+
+                    // Score
+                    const score = data.spendwiseScore || 0;
+                    document.getElementById('bigScore').textContent = score;
+                    document.getElementById('statScore').textContent = score;
+                    setTimeout(() => {
+                        document.getElementById('scoreBar').style.width = score + '%';
+                    }, 300);
+
+                    let label = '';
+                    if (score >= 80) label = '🏆 Excellent! You are a financial champion.';
+                    else if (score >= 60) label = '👍 Good job! Room for a little improvement.';
+                    else if (score >= 40) label = '📈 Fair. Focus on saving more and sticking to budgets.';
+                    else label = '⚠️ Needs attention. Review your spending habits.';
+                    document.getElementById('scoreLabel').textContent = label;
+
+                    // Stats
+                    document.getElementById('statTransactions').textContent = (data.recentTransactions || []).length + '+';
+                    document.getElementById('statBudgets').textContent = '-';
+                    document.getElementById('statGoals').textContent = '-';
+                })
+                .catch(err => console.error(err));
+
+            // Load email from session - fetch it via a simple call
+            fetch('api/auth/me')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.email) document.getElementById('profileEmail').textContent = data.email;
+                    if (data.createdAt) document.getElementById('profileJoined').textContent = 'Member since ' + new Date(data.createdAt).toLocaleDateString('en', { year: 'numeric', month: 'long' });
+                })
+                .catch(() => {});
+        }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', e => {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>
+

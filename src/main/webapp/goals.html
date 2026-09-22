@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Goals - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .goal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .goal-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: transform 0.2s;
+        }
+        .goal-card:hover { transform: translateY(-3px); }
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .goal-title-box { display: flex; align-items: center; gap: 0.8rem; }
+        .goal-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(85, 184, 130, 0.1);
+            color: #55b882;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .goal-title { margin: 0; font-size: 1.1rem; color: #fff; font-weight: 600; }
+        .goal-target-date { margin: 0; font-size: 0.85rem; color: #8b8fa3; margin-top: 0.2rem; }
+        
+        .goal-progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .goal-progress-fill {
+            height: 100%;
+            background: #55b882;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        .goal-amounts {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+        .goal-saved { color: #fff; font-weight: 600; }
+        .goal-target { color: #8b8fa3; }
+        
+        .add-funds-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 0.6rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .add-funds-btn:hover { background: rgba(85, 184, 130, 0.1); border-color: #55b882; color: #55b882; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item active"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Savings Goals</h1>
+                    <p class="text-muted text-sm mt-1">Track progress towards your financial dreams</p>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openGoalModal()"><i class="fa-solid fa-plus"></i> New Goal</button>
+                </div>
+            </header>
+
+            <div class="goal-grid" id="goalsContainer">
+                <div class="text-muted">Loading goals...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Goal Modal -->
+    <div id="goalModal" class="modal">
+        <div class="modal-content premium-card" style="background: #12141c;">
+            <span class="close-modal" onclick="closeGoalModal()">&times;</span>
+            <h2>Create Savings Goal</h2>
+            <form id="goalForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Goal Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Dream Vacation" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Target Amount (₹)</label>
+                    <input type="number" step="0.01" name="targetAmount" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Target Date</label>
+                    <input type="date" name="targetDate" class="form-control" required>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="closeGoalModal()">Save Goal</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGoals();
+            setupLogout();
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function loadGoals() {
+            // Mock data for SpendWise 2.0 Goals
+            const goals = [
+                { name: 'Emergency Fund', targetAmount: 500000, savedAmount: 320000, targetDate: '2026-12-31', icon: 'fa-kit-medical' },
+                { name: 'New Car Downpayment', targetAmount: 200000, savedAmount: 45000, targetDate: '2027-06-01', icon: 'fa-car' },
+                { name: 'Bali Vacation', targetAmount: 150000, savedAmount: 110000, targetDate: '2026-10-15', icon: 'fa-plane' }
+            ];
+
+            const container = document.getElementById('goalsContainer');
+            container.innerHTML = goals.map(g => {
+                const pct = Math.min((g.savedAmount / g.targetAmount) * 100, 100);
+                
+                return `
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div class="goal-title-box">
+                            <div class="goal-icon"><i class="fa-solid ${g.icon}"></i></div>
+                            <div>
+                                <h3 class="goal-title">${g.name}</h3>
+                                <p class="goal-target-date">Target: ${new Date(g.targetDate).toLocaleDateString('en-US', {month:'short', year:'numeric'})}</p>
+                            </div>
+                        </div>
+                        <div style="font-weight: 700; color: #55b882;">${pct.toFixed(0)}%</div>
+                    </div>
+                    
+                    <div>
+                        <div class="goal-progress-bar">
+                            <div class="goal-progress-fill" style="width: ${pct}%;"></div>
+                        </div>
+                        <div class="goal-amounts">
+                            <span class="goal-saved">${formatCurrency(g.savedAmount)}</span>
+                            <span class="goal-target">of ${formatCurrency(g.targetAmount)}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="add-funds-btn"><i class="fa-solid fa-plus"></i> Add Funds</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function openGoalModal() { document.getElementById('goalModal').classList.add('active'); }
+        function closeGoalModal() { document.getElementById('goalModal').classList.remove('active'); }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>

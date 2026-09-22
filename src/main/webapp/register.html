@@ -1,0 +1,331 @@
+    <title>Create Account - SpendWise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/extras.css?v=12">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* Overlay to dim/blur the background login page */
+        .register-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Standalone Register Card Modal */
+        .register-modal {
+            background: rgba(18, 20, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 560px;
+            padding: 2.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+            max-height: 95vh;
+        }
+
+        .register-modal h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #fff;
+            text-align: center;
+        }
+
+        .register-modal .subtitle {
+            margin: 0 0 1rem 0;
+            color: #8b8fa3;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .register-modal .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .register-modal label {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .register-modal .input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .register-modal .icon-left {
+            position: absolute;
+            left: 1rem;
+            color: #8b8fa3;
+            pointer-events: none;
+        }
+
+        .register-modal .icon-right {
+            position: absolute;
+            right: 1rem;
+            color: #8b8fa3;
+            cursor: pointer;
+        }
+
+        .register-modal .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .register-modal .form-control:focus {
+            border-color: #55b882;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .register-modal .btn-primary {
+            width: 100%;
+            padding: 0.9rem;
+            background: #55b882;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            box-sizing: border-box;
+            margin-top: 0.5rem;
+        }
+
+        .register-modal .btn-primary:hover {
+            background: #46a16d;
+        }
+        
+        .register-modal .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .register-modal .login-link {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8b8fa3;
+            margin-top: 0.5rem;
+        }
+
+        .register-modal .login-link a {
+            color: #55b882;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .register-modal .login-link a:hover {
+            color: #46a16d;
+            text-decoration: underline;
+        }
+
+        .register-modal .security-footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        /* Hide the original login content from assistive tech if it's just background */
+        .login-page { overflow: hidden; }
+
+        @media (max-width: 480px) {
+            .register-modal {
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <!-- ═══ BACKGROUND: The Login Page Structure (Blurred behind modal) ═══ -->
+    <div class="bg-panels" aria-hidden="true">
+        <div class="bg-panel"></div>
+        <div class="bg-panel"></div>
+        <div class="bg-panel"></div>
+        <div class="bg-panel"></div>
+        <div class="bg-panel"></div>
+        <div class="bg-panel"></div>
+    </div>
+    <div class="bg-gradient-overlay" aria-hidden="true"></div>
+
+    <div class="login-layout" aria-hidden="true">
+        <div class="login-left">
+            <div class="sw-brand">
+                <div class="sw-brand-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <span>SpendWise</span>
+            </div>
+            <h1>Take Control of<br>Your Finances</h1>
+            <p class="tagline">Track expenses, manage budgets and achieve your financial goals with clarity.</p>
+        </div>
+        <div class="login-right">
+            <div class="login-card">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Login to continue to your account</p>
+                <!-- Just visual background, not functional -->
+                <div class="lf-group"><label>Email Address</label><div class="lf-input-wrap"><input disabled></div></div>
+                <div class="lf-group"><label>Password</label><div class="lf-input-wrap"><input disabled></div></div>
+                <button class="lf-btn lf-btn-primary" disabled>Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-bar" aria-hidden="true">
+        <div class="cat-item transport"><i class="fa-solid fa-train"></i><span>Transport</span></div>
+        <div class="cat-item groceries"><i class="fa-solid fa-basket-shopping"></i><span>Groceries</span></div>
+        <div class="cat-item food"><i class="fa-solid fa-utensils"></i><span>Food & Dining</span></div>
+        <div class="cat-item travel"><i class="fa-solid fa-plane"></i><span>Travel</span></div>
+        <div class="cat-item shopping"><i class="fa-solid fa-bag-shopping"></i><span>Shopping</span></div>
+        <div class="cat-item electricity"><i class="fa-solid fa-bolt"></i><span>Electricity Bills</span></div>
+    </div>
+
+    <!-- ═══ FOREGROUND: The Create Account Modal ═══ -->
+    <div class="register-overlay">
+        <div class="register-modal">
+            <div>
+                <h2>Create Account</h2>
+                <p class="subtitle">Join SpendWise to manage your finances</p>
+            </div>
+            
+            <form action="api/auth/register" method="POST" id="registerForm" style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                
+                <div id="formMessage" style="display: none; padding: 10px; border-radius: 6px; font-size: 0.9rem; text-align: center; width: 100%; box-sizing: border-box;"></div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user icon-left"></i>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope icon-left"></i>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock icon-left"></i>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required minlength="6">
+                        <i class="fa-regular fa-eye icon-right" id="togglePassword"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">Create Account</button>
+                
+
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Login</a>
+                </div>
+            </form>
+
+            <div class="security-footer">
+                <i class="fa-solid fa-lock"></i> Bank-level security to keep your data safe
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const formMessage = document.querySelector('#formMessage');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        function showMessage(msg, isError) {
+            formMessage.textContent = msg;
+            formMessage.style.display = 'block';
+            if(isError) {
+                formMessage.style.backgroundColor = 'rgba(220, 53, 69, 0.15)';
+                formMessage.style.color = '#ff6b6b';
+                formMessage.style.border = '1px solid #dc3545';
+            } else {
+                formMessage.style.backgroundColor = 'rgba(40, 167, 69, 0.15)';
+                formMessage.style.color = '#4CAF50';
+                formMessage.style.border = '1px solid #28a745';
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            formMessage.style.display = 'none';
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Account...';
+
+            const formData = new URLSearchParams(new FormData(this));
+            
+            fetch('api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    showMessage(data.message, false);
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1500);
+                } else {
+                    showMessage(data.error || 'Registration failed', true);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('An error occurred. Please try again.', true);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            });
+        });
+    </script>
+</body>
+</html>

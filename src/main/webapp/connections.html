@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked Accounts - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .bank-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bank-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(85, 184, 130, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .bank-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .bank-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .bank-logo {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #55b882;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .bank-info h3 { margin: 0; font-size: 1.15rem; color: #fff; font-weight: 600; }
+        .bank-info p { margin: 0.2rem 0 0 0; color: #8b8fa3; font-size: 0.85rem; }
+        .bank-balance {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #55b882;
+            margin-top: 0.2rem;
+            letter-spacing: -0.5px;
+        }
+        .bank-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .bank-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+            padding: 0.35rem 0.7rem;
+            border-radius: 20px;
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .card-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #8b8fa3;
+            padding: 0.4rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .card-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .card-btn.danger:hover { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border-color: rgba(231, 76, 60, 0.4); }
+
+        /* Provider Selector Grid */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 1rem;
+            margin-top: 1.2rem;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .provider-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .provider-grid::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .provider-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 1.2rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .provider-item:hover { 
+            background: rgba(85, 184, 130, 0.08); 
+            border-color: #55b882;
+            transform: translateY(-2px);
+        }
+        .provider-icon {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .provider-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .provider-type {
+            font-size: 0.75rem;
+            color: #8b8fa3;
+        }
+
+        /* Password Toggle Input */
+        .password-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-input-wrap input {
+            width: 100%;
+            padding-right: 2.5rem;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 0.8rem;
+            color: #8b8fa3;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .password-toggle:hover { color: #fff; }
+
+        /* Auth Mode Switcher */
+        .auth-tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 1.2rem;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            color: #8b8fa3;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            background: rgba(85, 184, 130, 0.15);
+            color: #55b882;
+            font-weight: 600;
+        }
+
+        /* Connection Flow States */
+        .conn-state-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 280px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #55b882;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .btn-row button { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Linked Accounts</h1>
+                    <p class="text-muted text-sm mt-1">Manage your connected bank accounts, credit cards, and digital wallets</p>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openLinkModal()"><i class="fa-solid fa-plus"></i> Link New Account</button>
+                    <button class="action-btn icon-btn" onclick="loadAccounts()"><i class="fa-solid fa-arrows-rotate"></i></button>
+                </div>
+            </header>
+
+            <div class="bank-grid" id="accountsContainer">
+                <div class="text-muted" style="grid-column: 1 / -1; padding: 2rem; text-align: center;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading connected accounts...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Link Account Modal -->
+    <div id="linkModal" class="modal">
+        <div id="modalBody" class="modal-content premium-card" style="background: #12141c; max-width: 540px; padding: 2rem; border-radius: 16px;">
+            
+            <!-- Step 1: Select Institution -->
+            <div id="modalInitialContent">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.4rem;">Select your institution</h2>
+                        <p class="text-muted text-sm" style="margin-top: 0.3rem;">Choose your bank or wallet to connect securely.</p>
+                    </div>
+                    <span class="close-modal" onclick="closeModal()" style="position: static; font-size: 1.5rem;">&times;</span>
+                </div>
+
+                <div style="background: rgba(85, 184, 130, 0.08); color: #55b882; padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 1.2rem; border: 1px solid rgba(85, 184, 130, 0.2); display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-lock" style="font-size: 0.9rem;"></i>
+                    <span>Bank-grade 256-bit SSL encrypted connection. Your credentials are fully protected.</span>
+                </div>
+                
+                <div style="position: relative; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #8b8fa3;"></i>
+                    <input type="text" id="bankSearchInput" class="form-control" placeholder="Search bank or wallet (e.g. HDFC, SBI, Paytm...)" style="padding-left: 2.6rem; border-radius: 10px;" oninput="filterInstitutions()">
+                </div>
+                
+                <div class="provider-grid" id="providerGrid">
+                    <!-- HDFC -->
+                    <div class="provider-item" data-name="hdfc bank" onclick="openCredentialsScreen('HDFC Bank', 'bank', '#004c8f')">
+                        <div class="provider-icon" style="color: #004c8f;"><i class="fa-solid fa-building-columns"></i></div>
+                        <span class="provider-name">HDFC Bank</span>
+                        <span class="provider-type">NetBanking / Cards</span>
+                    </div>
+
+                    <!-- ICICI -->
+                    <div class="provider-item" data-name="icici bank" onclick="openCredentialsScreen('ICICI Bank', 'bank', '#f37021')">
+                        <div class="provider-icon" style="color: #f37021;"><i class="fa-solid fa-building-columns"></i></div>
+                        <span class="provider-name">ICICI Bank</span>
+                        <span class="provider-type">NetBanking / iMobile</span>
+                    </div>
+
+                    <!-- SBI -->
+                    <div class="provider-item" data-name="state bank of india sbi" onclick="openCredentialsScreen('State Bank of India', 'bank', '#0072bc')">
+                        <div class="provider-icon" style="color: #0072bc;"><i class="fa-solid fa-building-columns"></i></div>
+                        <span class="provider-name">SBI</span>
+                        <span class="provider-type">YONO / NetBanking</span>
+                    </div>
+
+                    <!-- AXIS -->
+                    <div class="provider-item" data-name="axis bank" onclick="openCredentialsScreen('Axis Bank', 'bank', '#97144d')">
+                        <div class="provider-icon" style="color: #97144d;"><i class="fa-solid fa-building-columns"></i></div>
+                        <span class="provider-name">Axis Bank</span>
+                        <span class="provider-type">NetBanking / Cards</span>
+                    </div>
+
+                    <!-- KOTAK -->
+                    <div class="provider-item" data-name="kotak mahindra bank" onclick="openCredentialsScreen('Kotak Bank', 'bank', '#ed1c24')">
+                        <div class="provider-icon" style="color: #ed1c24;"><i class="fa-solid fa-building-columns"></i></div>
+                        <span class="provider-name">Kotak 811</span>
+                        <span class="provider-type">NetBanking / Cards</span>
+                    </div>
+
+                    <!-- PAYTM -->
+                    <div class="provider-item" data-name="paytm wallet upi" onclick="openCredentialsScreen('PayTM Wallet', 'wallet', '#002970')">
+                        <div class="provider-icon" style="color: #002970;"><i class="fa-solid fa-wallet"></i></div>
+                        <span class="provider-name">PayTM</span>
+                        <span class="provider-type">Wallet & Payments</span>
+                    </div>
+
+                    <!-- PHONEPE -->
+                    <div class="provider-item" data-name="phonepe upi wallet" onclick="openCredentialsScreen('PhonePe', 'wallet', '#5f259f')">
+                        <div class="provider-icon" style="color: #5f259f;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                        <span class="provider-name">PhonePe</span>
+                        <span class="provider-type">UPI & Account Link</span>
+                    </div>
+
+                    <!-- GPAY -->
+                    <div class="provider-item" data-name="google pay gpay upi" onclick="openCredentialsScreen('Google Pay', 'wallet', '#4285f4')">
+                        <div class="provider-icon" style="color: #4285f4;"><i class="fa-brands fa-google-pay"></i></div>
+                        <span class="provider-name">Google Pay</span>
+                        <span class="provider-type">UPI Linked Account</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2 & Beyond: Dynamic Content -->
+            <div id="modalDynamicContent" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAccounts();
+            setupLogout();
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function openLinkModal() {
+            document.getElementById('modalInitialContent').style.display = 'block';
+            document.getElementById('modalDynamicContent').style.display = 'none';
+            document.getElementById('bankSearchInput').value = '';
+            filterInstitutions();
+            document.getElementById('linkModal').classList.add('active');
+        }
+
+        function closeModal() {
+            if (window.otpTimerInterval) clearInterval(window.otpTimerInterval);
+            document.getElementById('linkModal').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('modalInitialContent').style.display = 'block';
+                document.getElementById('modalDynamicContent').style.display = 'none';
+            }, 300);
+        }
+
+        function filterInstitutions() {
+            const query = document.getElementById('bankSearchInput').value.toLowerCase().trim();
+            const items = document.querySelectorAll('.provider-item');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (!query || name.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function openCredentialsScreen(instName, instType, themeColor) {
+            const initial = document.getElementById('modalInitialContent');
+            const dynamic = document.getElementById('modalDynamicContent');
+            
+            initial.style.display = 'none';
+            dynamic.style.display = 'block';
+            window.activeAuthMode = 'pin';
+
+            dynamic.innerHTML = `
+                <div style="text-align: left;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                        <div style="display:flex; align-items:center; gap: 0.8rem;">
+                            <div style="width:42px; height:42px; border-radius:10px; background:${themeColor}22; color:${themeColor}; display:flex; align-items:center; justify-content:center; font-size:1.4rem; border: 1px solid ${themeColor}44;">
+                                <i class="${instType === 'wallet' ? 'fa-solid fa-wallet' : 'fa-solid fa-building-columns'}"></i>
+                            </div>
+                            <div>
+                                <h2 style="margin:0; font-size: 1.3rem;">Connect ${instName}</h2>
+                                <span style="font-size:0.78rem; color:#55b882;"><i class="fa-solid fa-shield-halved"></i> 256-Bit Encrypted Authentication Portal</span>
+                            </div>
+                        </div>
+                        <span class="close-modal" onclick="closeModal()" style="position:static; font-size:1.5rem;">&times;</span>
+                    </div>
+
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" id="tabPin" onclick="switchAuthTab('pin')"><i class="fa-solid fa-lock"></i> Password / Login PIN</div>
+                        <div class="auth-tab" id="tabOtp" onclick="switchAuthTab('otp')"><i class="fa-solid fa-comment-sms"></i> Instant OTP Verification</div>
+                    </div>
+
+                    <form id="unifiedAuthForm" onsubmit="event.preventDefault(); handleAuthSubmit('${instName}', '${instType}', '${themeColor}');">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:block; margin-bottom:0.4rem; color:#8b8fa3; font-size:0.88rem; font-weight:500;">Phone Number / Gmail ID / Customer ID</label>
+                            <input type="text" id="userInputId" class="form-control" placeholder="e.g. 9876543210 or navyatera66@gmail.com" required style="width: 100%; box-sizing: border-box; border-radius:8px;">
+                        </div>
+                        
+                        <div id="pinSection" class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:block; margin-bottom:0.4rem; color:#8b8fa3; font-size:0.88rem; font-weight:500;">Password / Login PIN</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="userPassword" class="form-control" placeholder="Enter Password or Login PIN" required style="width: 100%; box-sizing: border-box; border-radius:8px;">
+                                <i class="fa-solid fa-eye password-toggle" onclick="togglePasswordVisibility('userPassword', this)"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label style="display:block; margin-bottom:0.4rem; color:#8b8fa3; font-size:0.88rem; font-weight:500;">Account Category</label>
+                            <select id="userAccType" class="form-control" style="width: 100%; box-sizing: border-box; border-radius: 8px; background:#181b26; color:#fff;">
+                                <option value="bank_account">Savings / Current Account</option>
+                                <option value="credit_card">Credit Card Account</option>
+                                <option value="wallet">Digital Wallet / UPI Account</option>
+                            </select>
+                        </div>
+                        
+                        <div class="btn-row">
+                            <button type="button" class="action-btn" onclick="document.getElementById('modalDynamicContent').style.display='none'; document.getElementById('modalInitialContent').style.display='block';">Back</button>
+                            <button type="submit" id="submitAuthBtn" class="lf-btn lf-btn-primary" style="padding: 0.75rem; background: #55b882; border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer;">Authenticate & Link Account</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function switchAuthTab(mode) {
+            window.activeAuthMode = mode;
+            const tabPin = document.getElementById('tabPin');
+            const tabOtp = document.getElementById('tabOtp');
+            const pinSection = document.getElementById('pinSection');
+            const submitBtn = document.getElementById('submitAuthBtn');
+            const pwdInput = document.getElementById('userPassword');
+
+            if (mode === 'otp') {
+                tabPin.classList.remove('active');
+                tabOtp.classList.add('active');
+                pinSection.style.display = 'none';
+                pwdInput.removeAttribute('required');
+                submitBtn.innerText = 'Send OTP Verification Code';
+            } else {
+                tabOtp.classList.remove('active');
+                tabPin.classList.add('active');
+                pinSection.style.display = 'block';
+                pwdInput.setAttribute('required', 'true');
+                submitBtn.innerText = 'Authenticate & Link Account';
+            }
+        }
+
+        function togglePasswordVisibility(inputId, iconElem) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElem.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElem.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function handleAuthSubmit(instName, instType, themeColor) {
+            const userVal = document.getElementById('userInputId').value.trim();
+            const accType = document.getElementById('userAccType').value;
+
+            if (!userVal) {
+                alert("Please enter a valid Phone Number, Gmail ID, or Customer ID.");
+                return;
+            }
+
+            if (window.activeAuthMode === 'otp') {
+                promptOtpVerification(instName, userVal, accType, themeColor);
+            } else {
+                const pwdVal = document.getElementById('userPassword').value;
+                if (!pwdVal) {
+                    alert("Please enter your Password or Login PIN.");
+                    return;
+                }
+                // Standard login pin submission -> trigger 2FA OTP prompt
+                promptOtpVerification(instName, userVal, accType, themeColor);
+            }
+        }
+
+        function promptOtpVerification(instName, userVal, accType, themeColor) {
+            window.currentDemoOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            window.selectedAccType = accType;
+            window.selectedUserVal = userVal;
+
+            const dynamic = document.getElementById('modalDynamicContent');
+            dynamic.innerHTML = `
+                <div style="text-align: left;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                        <div>
+                            <h2 style="margin:0; font-size: 1.3rem;">2FA OTP Verification</h2>
+                            <p class="text-muted text-sm" style="margin-top:0.2rem;">Enter 6-digit OTP sent to <strong>${userVal}</strong></p>
+                        </div>
+                        <span class="close-modal" onclick="closeModal()" style="position:static; font-size:1.5rem;">&times;</span>
+                    </div>
+
+                    <div style="background: rgba(85, 184, 130, 0.12); color: #55b882; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 500; margin-bottom: 1.2rem; border: 1px solid rgba(85, 184, 130, 0.3); display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fa-solid fa-mobile-screen"></i> Verification Code: <strong style="font-size: 1.1rem; letter-spacing: 2px;" id="otpCodeDisplay">${window.currentDemoOtp}</strong></span>
+                        <button type="button" onclick="autofillOtpCode()" style="background: rgba(85, 184, 130, 0.2); border: 1px solid #55b882; color: #55b882; border-radius: 6px; padding: 3px 8px; font-size: 0.75rem; cursor: pointer;">Autofill Code</button>
+                    </div>
+
+                    <form onsubmit="event.preventDefault(); verifyOtpAndLink('${instName}');">
+                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 0.8rem;">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                            <input type="text" class="form-control otp-box" maxlength="1" required style="width:14%; height:48px; text-align:center; font-size:1.4rem; padding:0; border-radius:8px;" onkeyup="focusNextOtp(this)">
+                        </div>
+                        <p id="otpErrorMsg" style="color: #e74c3c; font-size: 0.85rem; margin-top: 0; margin-bottom: 1rem; display: none;">Invalid verification code. Please try again.</p>
+                        
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom: 1.5rem;">
+                            <a href="#" onclick="openCredentialsScreen('${instName}', '${accType}', '${themeColor}')" style="color:#8b8fa3; text-decoration:none;">Change ID / Credentials</a>
+                            <a href="#" id="resendOtpLink" onclick="resendOtpCode('${instName}')" style="color:#55b882; text-decoration:none;">Resend OTP</a>
+                        </div>
+                        
+                        <button type="submit" class="lf-btn lf-btn-primary" style="width: 100%; padding: 0.8rem; background: #55b882; border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer;">Verify & Complete Linking</button>
+                    </form>
+                </div>
+            `;
+            setTimeout(() => {
+                const first = document.querySelector('.otp-box');
+                if (first) first.focus();
+            }, 100);
+        }
+
+        function focusNextOtp(elem) {
+            if (elem.value.length >= 1) {
+                let next = elem.nextElementSibling;
+                if (next) next.focus();
+            }
+        }
+
+        function autofillOtpCode() {
+            const codeStr = window.currentDemoOtp || '';
+            const boxes = document.querySelectorAll('.otp-box');
+            boxes.forEach((box, i) => {
+                box.value = codeStr[i] || '';
+            });
+            document.getElementById('otpErrorMsg').style.display = 'none';
+        }
+
+        function resendOtpCode(instName) {
+            window.currentDemoOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('otpCodeDisplay').innerText = window.currentDemoOtp;
+            document.querySelectorAll('.otp-box').forEach(b => b.value = '');
+            const first = document.querySelector('.otp-box');
+            if (first) first.focus();
+            document.getElementById('otpErrorMsg').style.display = 'none';
+        }
+
+        function verifyOtpAndLink(instName) {
+            const boxes = document.querySelectorAll('.otp-box');
+            let enteredOtp = '';
+            boxes.forEach(b => enteredOtp += b.value);
+            if (enteredOtp.length !== 6) return;
+
+            if (enteredOtp !== window.currentDemoOtp) {
+                document.getElementById('otpErrorMsg').style.display = 'block';
+                return;
+            }
+
+            executeLinkProcess(instName, window.selectedAccType || 'bank_account');
+        }
+
+        function executeLinkProcess(instName, accType) {
+            const dynamic = document.getElementById('modalDynamicContent');
+            const userValDisplay = window.selectedUserVal || 'Credentials';
+
+            // Animated progress state
+            dynamic.innerHTML = `
+                <div class="conn-state-container">
+                    <div class="spinner"></div>
+                    <h2 style="margin: 0; font-size: 1.3rem;">Connecting to ${instName}...</h2>
+                    <p class="text-muted text-sm mt-1">Verifying account for <strong>${userValDisplay}</strong></p>
+                    
+                    <div style="text-align: left; margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); width: 100%; box-sizing: border-box;">
+                        <p style="margin: 0.5rem 0; color: #55b882;" id="step1"><i class="fa-solid fa-circle-check"></i> Phone / Email credentials validated</p>
+                        <p style="margin: 0.5rem 0; color: #fff;" id="step2"><i class="fa-solid fa-spinner fa-spin"></i> Authenticating 2FA session token</p>
+                        <p style="margin: 0.5rem 0; color: #8b8fa3;" id="step3"><i class="fa-regular fa-circle"></i> Fetching live balance & account details</p>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                document.getElementById('step2').innerHTML = '<i class="fa-solid fa-circle-check"></i> 2FA Token Verified';
+                document.getElementById('step2').style.color = '#55b882';
+                document.getElementById('step3').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing balance & transactions';
+                document.getElementById('step3').style.color = '#fff';
+            }, 1000);
+
+            setTimeout(() => {
+                fetch('api/accounts/link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        providerName: instName,
+                        accountType: accType
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        dynamic.innerHTML = `
+                            <div class="conn-state-container">
+                                <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(85, 184, 130, 0.15); color: #55b882; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1rem;">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <h2 style="margin:0; font-size: 1.4rem;">Account Linked Successfully!</h2>
+                                <p class="text-muted text-sm mt-1">${instName} has been linked to your SpendWise profile.</p>
+                                
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.2rem; border-radius: 10px; margin-top: 1.2rem; width: 100%; text-align: left; box-sizing: border-box;">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom: 0.6rem;">
+                                        <span class="text-muted text-sm">Provider</span>
+                                        <span style="font-weight:600;">${instName}</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom: 0.6rem;">
+                                        <span class="text-muted text-sm">Linked Identifier</span>
+                                        <span style="font-weight:600;">${userValDisplay}</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom: 0.6rem;">
+                                        <span class="text-muted text-sm">Account Number</span>
+                                        <span style="font-weight:600;">•••• ${data.accountMask}</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <span class="text-muted text-sm">Current Balance</span>
+                                        <span style="color:#55b882; font-weight:700;">${formatCurrency(data.balance)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="btn-row" style="margin-top: 1.5rem;">
+                                    <button class="action-btn" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+                                    <button class="lf-btn lf-btn-primary" onclick="closeModal(); loadAccounts();" style="padding: 0.75rem; background: #55b882; border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer;">Done</button>
+                                </div>
+                            </div>
+                        `;
+                        loadAccounts();
+                    } else if (data.error && data.error.toLowerCase().includes("already")) {
+                        dynamic.innerHTML = `
+                            <div class="conn-state-container">
+                                <i class="fa-solid fa-circle-info" style="color: #3498db; font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h2 style="margin:0;">Already Linked</h2>
+                                <p class="text-muted text-sm mt-1">${instName} is already connected to your account.</p>
+                                <div class="btn-row" style="margin-top: 1.5rem;">
+                                    <button class="lf-btn lf-btn-primary" onclick="closeModal();" style="padding: 0.75rem; background: #55b882; border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer;">Close</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        dynamic.innerHTML = `
+                            <div class="conn-state-container">
+                                <i class="fa-solid fa-circle-xmark" style="font-size: 3rem; color: #e74c3c; margin-bottom: 1rem;"></i>
+                                <h2 style="margin:0;">Connection Failed</h2>
+                                <p class="text-muted text-sm mt-1">${data.error || 'Failed to authenticate with provider.'}</p>
+                                <div class="btn-row" style="margin-top: 1.5rem;">
+                                    <button class="action-btn" onclick="openLinkModal()">Try Again</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(err => {
+                    dynamic.innerHTML = `
+                        <div class="conn-state-container">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: #f1c40f; font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h2 style="margin:0;">Server Error</h2>
+                            <p class="text-muted text-sm mt-1">Unable to connect to server. Please try again.</p>
+                            <div class="btn-row" style="margin-top: 1.5rem;">
+                                <button class="action-btn" onclick="closeModal()">Close</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }, 2000);
+        }
+
+        function loadAccounts() {
+            fetch('api/accounts')
+                .then(r => { if (r.status === 401) window.location.href = 'login.html'; return r.json(); })
+                .then(data => {
+                    const container = document.getElementById('accountsContainer');
+                    if (!data || data.length === 0) {
+                        container.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 14px;">
+                                <i class="fa-solid fa-building-columns" style="font-size: 3rem; color: #8b8fa3; margin-bottom: 1rem;"></i>
+                                <h3 style="margin:0; color:#fff;">No accounts linked yet</h3>
+                                <p class="text-muted text-sm mt-1 mb-3">Connect your bank accounts or wallets to view real-time balances & analytics.</p>
+                                <button class="action-btn" onclick="openLinkModal()"><i class="fa-solid fa-plus"></i> Link Your First Account</button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = data.map(acc => {
+                        let icon = '<i class="fa-solid fa-building-columns"></i>';
+                        if (acc.accountType === 'wallet' || acc.accountType === 'upi') icon = '<i class="fa-solid fa-wallet"></i>';
+                        if (acc.accountType === 'credit_card') icon = '<i class="fa-solid fa-credit-card"></i>';
+
+                        const formattedType = (acc.accountType || 'account').replace('_', ' ').toUpperCase();
+
+                        return `
+                        <div class="bank-card">
+                            <div class="bank-header">
+                                <div class="bank-logo-wrap">
+                                    <div class="bank-logo">${icon}</div>
+                                    <div class="bank-info">
+                                        <h3>${acc.providerName}</h3>
+                                        <p>${formattedType} •••• ${acc.accountMask || 'XXXX'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bank-balance">${formatCurrency(acc.balance)}</div>
+                            <div class="bank-footer">
+                                <div class="bank-status"><i class="fa-solid fa-circle-check"></i> Connected</div>
+                                <div class="card-actions">
+                                    <button class="card-btn" title="Sync Account" onclick="syncAccount(${acc.accountId}, this)"><i class="fa-solid fa-rotate"></i> Sync</button>
+                                    <button class="card-btn danger" title="Unlink Account" onclick="unlinkAccount(${acc.accountId}, '${acc.providerName}')"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                })
+                .catch(err => console.error('Failed to load accounts:', err));
+        }
+
+        function syncAccount(accountId, btnElem) {
+            btnElem.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            fetch(`api/accounts/${accountId}/sync`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    btnElem.innerHTML = '<i class="fa-solid fa-check" style="color:#55b882;"></i>';
+                    setTimeout(() => loadAccounts(), 600);
+                })
+                .catch(() => {
+                    btnElem.innerHTML = '<i class="fa-solid fa-rotate"></i> Sync';
+                });
+        }
+
+        function unlinkAccount(accountId, providerName) {
+            if (confirm(`Are you sure you want to unlink ${providerName}?`)) {
+                fetch(`api/accounts/${accountId}`, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(data => {
+                        loadAccounts();
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>

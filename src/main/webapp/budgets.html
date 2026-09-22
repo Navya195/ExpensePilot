@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgets - SpendWise 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .budget-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .budget-icon-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .budget-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .budget-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+        .budget-amounts {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .budget-spent { color: #fff; font-weight: 600; font-size: 1.2rem; }
+        .budget-limit { color: #8b8fa3; }
+        .budget-status {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        .status-safe { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+        .status-warning { background: rgba(241, 196, 15, 0.1); color: #f1c40f; }
+        .status-danger { background: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand sidebar-brand">
+                <div class="brand-icon"></div>
+                <span>SpendWise</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+                <a href="budgets.html" class="nav-item active"><i class="fa-solid fa-wallet"></i> Budgets</a>
+                <a href="goals.html" class="nav-item"><i class="fa-solid fa-bullseye"></i> Savings Goals</a>
+                <a href="subscriptions.html" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Subscriptions</a>
+                <a href="analytics.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+
+                <div class="sidebar-section-divider"></div>
+                <div class="sidebar-section-label">DASHBOARD INSIGHTS</div>
+
+                <a href="dashboard.html#financial-time-machine" class="nav-item nav-insight" data-section="financial-time-machine"><i class="fa-solid fa-wand-magic-sparkles"></i> Financial Time Machine</a>
+                <a href="dashboard.html#financial-futures" class="nav-item nav-insight" data-section="financial-futures"><i class="fa-solid fa-compass"></i> Explore Your Financial Future</a>
+                <a href="dashboard.html#best-time-to-spend" class="nav-item nav-insight" data-section="best-time-to-spend"><i class="fa-solid fa-clock"></i> Best Time to Spend</a>
+                <a href="dashboard.html#ai-discovered-patterns" class="nav-item nav-insight" data-section="ai-discovered-patterns"><i class="fa-solid fa-brain"></i> AI Discovered Patterns</a>
+                <a href="dashboard.html#smart-financial-health" class="nav-item nav-insight" data-section="smart-financial-health"><i class="fa-solid fa-heart-pulse"></i> Smart Financial Health</a>
+                <a href="dashboard.html#monthly-comparison" class="nav-item nav-insight" data-section="monthly-comparison"><i class="fa-solid fa-chart-column"></i> What Changed This Month?</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="#" id="logoutBtn" class="nav-item text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1 class="page-title">Budgets</h1>
+                    <p class="text-muted text-sm mt-1">Track your spending limits for this month</p>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openBudgetModal()"><i class="fa-solid fa-plus"></i> Create Budget</button>
+                </div>
+            </header>
+
+            <div class="premium-card" style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; padding: 1.5rem;">
+                <div>
+                    <div class="text-muted text-sm">Total Monthly Budget</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #fff; margin-top: 0.5rem;" id="totalBudgetLimit">₹0.00</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="text-muted text-sm">Total Spent</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #fff; margin-top: 0.5rem;" id="totalBudgetSpent">₹0.00</div>
+                </div>
+                <div style="width: 200px;">
+                    <div class="progress-header" style="margin-bottom: 0.8rem;">
+                        <span>Overall Progress</span>
+                        <span id="overallProgressText">0%</span>
+                    </div>
+                    <div class="progress-bar-bg" style="height: 8px;">
+                        <div class="progress-bar-fill" id="overallProgressBar" style="width: 0%; background: #55b882;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="budget-grid" id="budgetContainer">
+                <div class="text-muted">Loading budgets...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Budget Modal -->
+    <div id="budgetModal" class="modal">
+        <div class="modal-content premium-card" style="background: #12141c;">
+            <span class="close-modal" onclick="closeBudgetModal()">&times;</span>
+            <h2>Create New Budget</h2>
+            <form id="budgetForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Category</label>
+                    <select name="category" class="form-control" required>
+                        <option value="Food & Groceries">Food & Groceries</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills & Lifestyle">Bills & Lifestyle</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Monthly Limit (₹)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" required>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="closeBudgetModal()">Save Budget</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBudgets();
+            setupLogout();
+        });
+
+        function formatCurrency(n) {
+            return '₹' + (n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getCategoryIcon(category) {
+            const map = {
+                'Food & Groceries': '🍔',
+                'Transport': '🚗',
+                'Shopping': '🛍️',
+                'Bills & Lifestyle': '🧾',
+                'Travel': '✈️',
+                'Other': '📌'
+            };
+            return map[category] || '📌';
+        }
+
+        function loadBudgets() {
+            // Mock data for SpendWise 2.0 Budgets
+            const budgets = [
+                { category: 'Food & Groceries', limit: 15000, spent: 12400 },
+                { category: 'Transport', limit: 8000, spent: 4300 },
+                { category: 'Shopping', limit: 10000, spent: 9500 },
+                { category: 'Bills & Lifestyle', limit: 5000, spent: 1723 }
+            ];
+
+            let totalLimit = 0;
+            let totalSpent = 0;
+
+            const container = document.getElementById('budgetContainer');
+            container.innerHTML = budgets.map(b => {
+                totalLimit += b.limit;
+                totalSpent += b.spent;
+
+                const pct = (b.spent / b.limit) * 100;
+                let color = '#2ecc71';
+                let statusClass = 'status-safe';
+                let statusText = 'On Track';
+
+                if (pct >= 90) { color = '#e74c3c'; statusClass = 'status-danger'; statusText = 'Exceeded'; }
+                else if (pct >= 75) { color = '#f1c40f'; statusClass = 'status-warning'; statusText = 'Warning'; }
+
+                return `
+                <div class="budget-card">
+                    <div class="budget-header">
+                        <div class="budget-icon-title">
+                            <div class="budget-icon">${getCategoryIcon(b.category)}</div>
+                            <h3 class="budget-title">${b.category}</h3>
+                        </div>
+                        <span class="budget-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div>
+                        <div class="budget-amounts">
+                            <span class="budget-spent">${formatCurrency(b.spent)}</span>
+                            <span class="budget-limit">of ${formatCurrency(b.limit)}</span>
+                        </div>
+                        <div class="progress-bar-bg" style="margin-top: 0.8rem;">
+                            <div class="progress-bar-fill" style="width: ${Math.min(pct, 100)}%; background: ${color};"></div>
+                        </div>
+                        <div class="text-muted text-sm mt-1">${formatCurrency(b.limit - b.spent)} remaining</div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            document.getElementById('totalBudgetLimit').textContent = formatCurrency(totalLimit);
+            document.getElementById('totalBudgetSpent').textContent = formatCurrency(totalSpent);
+            
+            const totalPct = (totalSpent / totalLimit) * 100;
+            document.getElementById('overallProgressText').textContent = totalPct.toFixed(0) + '%';
+            
+            const overallBar = document.getElementById('overallProgressBar');
+            overallBar.style.width = Math.min(totalPct, 100) + '%';
+            overallBar.style.background = totalPct > 90 ? '#e74c3c' : (totalPct > 75 ? '#f1c40f' : '#55b882');
+        }
+
+        function openBudgetModal() { document.getElementById('budgetModal').classList.add('active'); }
+        function closeBudgetModal() { document.getElementById('budgetModal').classList.remove('active'); }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch('api/auth/logout', { method: 'POST' }).then(() => window.location.href = 'login.html');
+            });
+        }
+    </script>
+</body>
+</html>

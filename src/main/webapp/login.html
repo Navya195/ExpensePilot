@@ -1,0 +1,225 @@
+    <title>Login - SpendWise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/extras.css?v=12">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="login-page">
+
+    <!-- ═══ BACKGROUND: 6 lifestyle photo panels (NO UI inside these) ═══ -->
+    <div class="bg-panels" aria-hidden="true">
+        <div class="bg-panel"></div><!-- City/Transport -->
+        <div class="bg-panel"></div><!-- Groceries -->
+        <div class="bg-panel"></div><!-- Food & Dining -->
+        <div class="bg-panel"></div><!-- Travel/Airplane -->
+        <div class="bg-panel"></div><!-- Shopping -->
+        <div class="bg-panel"></div><!-- Finance/Electricity -->
+    </div>
+    <div class="bg-gradient-overlay" aria-hidden="true"></div>
+
+    <!-- ═══ PAGE LAYOUT: HTML UI only ═══ -->
+    <div class="login-layout">
+
+        <!-- LEFT: SpendWise branding + features (HTML only) -->
+        <div class="login-left">
+            <div class="sw-brand">
+                <div class="sw-brand-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <span>SpendWise</span>
+            </div>
+
+            <h1>Take Control of<br>Your Finances</h1>
+            <p class="tagline">Track expenses, manage budgets and achieve your financial goals with clarity.</p>
+
+            <div class="login-features">
+                <div class="login-feature-item">
+                    <div class="login-feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="login-feature-text">
+                        <h3>Secure & Private</h3>
+                        <p>Your data is 100% protected</p>
+                    </div>
+                </div>
+                <div class="login-feature-item">
+                    <div class="login-feature-icon"><i class="fa-solid fa-chart-simple"></i></div>
+                    <div class="login-feature-text">
+                        <h3>Smart Insights</h3>
+                        <p>Understand your spending</p>
+                    </div>
+                </div>
+                <div class="login-feature-item">
+                    <div class="login-feature-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="login-feature-text">
+                        <h3>Achieve Goals</h3>
+                        <p>Plan today, secure tomorrow</p>
+                    </div>
+                </div>
+                <div class="login-feature-item">
+                    <div class="login-feature-icon"><i class="fa-solid fa-bell"></i></div>
+                    <div class="login-feature-text">
+                        <h3>Real-time Alerts</h3>
+                        <p>Stay updated, always</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Functional login card (HTML only) -->
+        <div class="login-right">
+            <div class="login-card">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Login to continue to your account</p>
+
+                <div id="formMessage" style="display:none;padding:10px;margin-bottom:12px;border-radius:6px;font-size:0.84rem;text-align:center;"></div>
+
+                <form id="loginForm" action="api/auth/login" method="POST">
+                    <div class="lf-group">
+                        <label for="email">Email Address</label>
+                        <div class="lf-input-wrap">
+                            <i class="fa-regular fa-envelope lf-icon-left"></i>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+
+                    <div class="lf-group">
+                        <label for="password">Password</label>
+                        <div class="lf-input-wrap">
+                            <i class="fa-solid fa-lock lf-icon-left"></i>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <i class="fa-regular fa-eye lf-icon-right" id="togglePassword"></i>
+                        </div>
+                        <a href="#" class="lf-forgot" onclick="event.preventDefault(); document.getElementById('forgotModal').style.display='flex';">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="lf-btn lf-btn-primary">Login</button>
+
+                    <div class="lf-register">
+                        Don't have an account? <a href="register.html">Create New Account</a>
+                    </div>
+                </form>
+            </div>
+            <div class="lf-security">
+                <i class="fa-solid fa-lock"></i> Bank-level security to keep your data safe
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+        <div class="modal-content premium-card" style="background: #12141c; width: 100%; max-width: 400px; padding: 2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); position: relative;">
+            <span onclick="document.getElementById('forgotModal').style.display='none'" style="position: absolute; right: 20px; top: 15px; color: #8b8fa3; cursor: pointer; font-size: 1.5rem;">&times;</span>
+            <h2 style="color: #fff; margin-bottom: 0.5rem;">Reset Password</h2>
+            <p class="text-muted text-sm mb-2">Enter your registered email address to receive a password reset link.</p>
+            
+            <div id="forgotMsg" style="display:none; padding:10px; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
+            
+            <div class="lf-group" style="text-align: left;">
+                <label for="forgotEmail" style="color:#8b8fa3;">Email Address</label>
+                <div class="lf-input-wrap">
+                    <i class="fa-solid fa-envelope lf-icon-left"></i>
+                    <input type="email" id="forgotEmail" placeholder="Enter your email" required style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0.8rem 1rem 0.8rem 2.5rem; border-radius: 8px;">
+                </div>
+            </div>
+            
+            <button id="sendResetBtn" class="lf-btn lf-btn-primary" onclick="sendResetLink()" style="margin-top: 1rem; width: 100%;">Send Reset Link</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM: Category icons — each aligned under its matching panel -->
+    <div class="category-bar">
+        <div class="cat-item transport"><i class="fa-solid fa-train"></i><span>Transport</span></div>
+        <div class="cat-item groceries"><i class="fa-solid fa-basket-shopping"></i><span>Groceries</span></div>
+        <div class="cat-item food"><i class="fa-solid fa-utensils"></i><span>Food & Dining</span></div>
+        <div class="cat-item travel"><i class="fa-solid fa-plane"></i><span>Travel</span></div>
+        <div class="cat-item shopping"><i class="fa-solid fa-bag-shopping"></i><span>Shopping</span></div>
+        <div class="cat-item electricity"><i class="fa-solid fa-bolt"></i><span>Electricity Bills</span></div>
+    </div>
+
+    <script>
+        function sendResetLink() {
+            const email = document.getElementById('forgotEmail').value;
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('sendResetBtn');
+            
+            if (!email || !email.includes('@')) {
+                msgEl.textContent = 'Please enter a valid email address.';
+                msgEl.style.color = '#ff6b6b';
+                msgEl.style.background = 'rgba(220,53,69,0.15)';
+                msgEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            fetch('api/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.textContent = 'Send Reset Link';
+                btn.disabled = false;
+                
+                if (data.success) {
+                    msgEl.style.background = 'rgba(76,175,80,0.15)';
+                    msgEl.style.color = '#4CAF50';
+                    msgEl.innerHTML = `Secure reset link generated successfully.<br><br><a href="${data.resetLink}" style="color:#55b882; font-weight:bold; text-decoration:underline;">Click here to Reset Password</a>`;
+                    msgEl.style.display = 'block';
+                } else {
+                    msgEl.style.background = 'rgba(220,53,69,0.15)';
+                    msgEl.style.color = '#ff6b6b';
+                    msgEl.textContent = data.error || 'Error generating reset link.';
+                    msgEl.style.display = 'block';
+                }
+            })
+            .catch(() => {
+                btn.textContent = 'Send Reset Link';
+                btn.disabled = false;
+            });
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const pwd = document.getElementById('password');
+            pwd.setAttribute('type', pwd.type === 'password' ? 'text' : 'password');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        function showMsg(msg, isError) {
+            const el = document.getElementById('formMessage');
+            el.textContent = msg;
+            el.style.display = 'block';
+            el.style.background = isError ? 'rgba(220,53,69,0.15)' : 'rgba(76,175,80,0.15)';
+            el.style.color = isError ? '#ff6b6b' : '#4CAF50';
+            el.style.border = '1px solid ' + (isError ? '#dc3545' : '#28a745');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            document.getElementById('formMessage').style.display = 'none';
+
+            fetch('api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(new FormData(this))
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showMsg(data.message || 'Login successful!', false);
+                    setTimeout(() => { window.location.href = data.redirect; }, 500);
+                } else {
+                    showMsg(data.error || 'Login failed. Please try again.', true);
+                    btn.disabled = false; btn.textContent = 'Login';
+                }
+            })
+            .catch(() => {
+                showMsg('An error occurred. Please try again.', true);
+                btn.disabled = false; btn.textContent = 'Login';
+            });
+        });
+    </script>
+</body>
+</html>
