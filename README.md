@@ -1,4 +1,4 @@
-# 💸 SpendWise 2.0 — Smart Personal Finance Command Center
+# 💸 ExpensePilot 2.0 — Smart Personal Finance Command Center
 
 SpendWise 2.0 is a premium, full-stack personal finance application. It has been completely re-architected into a fast, modern **Node.js, Express, and SQLite** backend, paired with a gorgeous, dark-themed frontend utilizing **Vanilla JS, CSS Grid/Flexbox**, and **Chart.js**.
 
