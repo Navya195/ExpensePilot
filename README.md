@@ -3,17 +3,101 @@
 SpendWise 2.0 is a premium, full-stack personal finance application. It has been completely re-architected into a fast, modern **Node.js, Express, and SQLite** backend, paired with a gorgeous, dark-themed frontend utilizing **Vanilla JS, CSS Grid/Flexbox**, and **Chart.js**.
 
 ---
+SpendWise – Login Page
 
-## ✨ Features
+The SpendWise Login Page provides a clean, modern, and secure entry point for users to access their personal finance dashboard. The page uses a dark, professional financial theme with visually appealing lifestyle imagery representing common spending categories such as groceries, food, travel, shopping, and bills.
 
-- **Automated Transaction Intelligence:** A custom deduplication engine, smart auto-categorization based on merchant keywords, and recurring bill detection.
-- **Dynamic Dashboard:** A central command center featuring a "Safe to Spend" calculator, financial health score, and a 30-day cash flow forecast.
-- **Connections & Data:** Manage all your linked bank accounts, wallets, and manual entries in one place.
-- **Budgets & Goals:** Intuitive progress bars that change color based on spending velocity, plus visual savings trackers for long-term targets.
-- **Analytics & Insights:** Fully interactive, animated Chart.js graphs tracking Income vs Expenses, Category Doughnuts, and Net Worth trends. Includes AI-driven actionable insights.
-- **Debt Management:** A dedicated view for tracking mortgages, loans, and credit cards against your total assets.
+🔐 Key Features
+Secure Login: Users can enter their registered email address and password to access their account.
+Password Visibility: Users can easily show or hide their password while logging in.
+Forgot Password: Provides an option to recover access to an account.
+Create New Account: New users can navigate directly to the registration page.
+Financial Branding: SpendWise branding and messaging clearly communicate the application's purpose.
+Security Highlight: The page emphasizes privacy and bank-level security for user financial information.
+Responsive Visual Design: Uses a full-screen layout with a dark theme, financial imagery, and clear call-to-action elements.
+Spending Categories: Visual category indicators at the bottom represent areas such as Transport, Groceries, Food & Dining, Travel, Shopping, and Electricity Bills.
 
----
+<img width="1907" height="962" alt="image" src="https://github.com/user-attachments/assets/b5281b55-042f-4b81-be7f-745af0aa7984" />
+
+
+📊 SpendWise Dashboard
+
+The SpendWise Dashboard acts as the central financial management interface where users can monitor their income, expenses, savings, spending capacity, and overall financial position from a single screen.
+
+🏠 Dashboard Overview
+
+The dashboard begins with a personalized greeting such as “Good afternoon” and provides a quick summary of the user's financial activity for the current month.
+
+A search bar allows users to quickly find transactions, merchants, or categories, while the month selector allows them to change the reporting period.
+
+💰 Safe to Spend Today
+
+The Safe to Spend Today section provides an estimated amount the user can comfortably spend based on their:
+
+Current budget
+Spending patterns
+Upcoming expenses
+
+The On Track indicator gives users a quick visual indication of their current spending status.
+
+📈 Money Snapshot
+
+The Money Snapshot provides a compact overview of the user's financial position:
+
+Income
+Spent
+Saved
+Invested
+Savings Rate
+
+This allows users to understand their financial activity without navigating through multiple pages.
+
+💳 Financial Summary Cards
+
+The dashboard provides important financial metrics through individual cards:
+
+Total Balance – Displays the user's current available balance.
+Monthly Income – Shows income received during the selected month.
+Monthly Expense – Displays total spending for the month.
+Available to Spend – Indicates the amount currently available for spending.
+Total Savings – Tracks accumulated savings.
+Net Worth – Provides an overall view of the user's financial position.
+🧠 Dashboard Insights
+
+The Dashboard Insights section is designed to provide personalized financial information and help users understand their spending behavior.
+
+The sidebar also provides access to advanced features such as:
+
+📊 Analytics
+🤖 AI Discovered Patterns
+❤️ Smart Financial Health
+🔮 Explore Your Financial Future
+⏳ Financial Time Machine
+💡 Best Time to Spend
+📅 What Changed This Month?
+➕ Transaction Management
+
+The + Add Transaction button allows users to quickly record new financial activities, making it easier to keep their financial data updated.
+
+🔔 Notifications
+
+The notification icon provides access to important financial alerts and updates, helping users stay informed about their account activity.
+
+🤖 Ask SpendWise
+
+The Ask SpendWise assistant provides an interactive way for users to ask questions about their financial information and receive personalized insights from the application.
+
+🧭 Navigation
+
+The sidebar provides quick navigation to the main sections:
+
+Dashboard → Transactions → Budgets → Savings Goals → Subscriptions → Analytics
+
+It also provides access to the user's Profile and Logout options.
+
+<img width="1907" height="932" alt="image" src="https://github.com/user-attachments/assets/c5530819-fa44-424f-b06c-c939e92ab342" />
+
+
 
 ## 🏗️ Technology Stack
 
@@ -80,3 +164,5 @@ http://localhost:8080/login.html
 
 ---
 *Built with modern design principles and robust local-first data privacy.*
+
+
