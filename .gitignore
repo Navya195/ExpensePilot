@@ -1,5 +1,6 @@
 node_modules/
 target/
+apache-maven-3.9.6/
 *.db-wal
 *.db-shm
 .DS_Store
