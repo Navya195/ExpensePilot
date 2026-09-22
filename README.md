@@ -17,7 +17,8 @@ Security Highlight: The page emphasizes privacy and bank-level security for user
 Responsive Visual Design: Uses a full-screen layout with a dark theme, financial imagery, and clear call-to-action elements.
 Spending Categories: Visual category indicators at the bottom represent areas such as Transport, Groceries, Food & Dining, Travel, Shopping, and Electricity Bills.
 
-<img width="1907" height="962" alt="image" src="https://github.com/user-attachments/assets/b5281b55-042f-4b81-be7f-745af0aa7984" />
+<img width="1890" height="890" alt="image" src="https://github.com/user-attachments/assets/e5c991f2-5f20-440e-9057-91026b806e8a" />
+
 
 
 📊 ExpensePilot Dashboard
@@ -95,7 +96,8 @@ Dashboard → Transactions → Budgets → Savings Goals → Subscriptions → A
 
 It also provides access to the user's Profile and Logout options.
 
-<img width="1907" height="932" alt="image" src="https://github.com/user-attachments/assets/c5530819-fa44-424f-b06c-c939e92ab342" />
+
+<img width="1905" height="886" alt="image" src="https://github.com/user-attachments/assets/c2175338-4e53-470d-b2c3-ca8ed2b30182" />
 
 
 
