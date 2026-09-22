@@ -1,11 +1,11 @@
-# 💸 ExpensePilot 2.0 — Smart Personal Finance Command Center
+# 💸 ExpensePilot  — Smart expense tracker system
 
-SpendWise 2.0 is a premium, full-stack personal finance application. It has been completely re-architected into a fast, modern **Node.js, Express, and SQLite** backend, paired with a gorgeous, dark-themed frontend utilizing **Vanilla JS, CSS Grid/Flexbox**, and **Chart.js**.
+Expensepilot is a premium, full-stack personal finance application. It has been completely re-architected into a fast, modern **Node.js, Express, and SQLite** backend, paired with a gorgeous, dark-themed frontend utilizing **Vanilla JS, CSS Grid/Flexbox**, and **Chart.js**.
 
 ---
-SpendWise – Login Page
+Expensepilot – Login Page
 
-The SpendWise Login Page provides a clean, modern, and secure entry point for users to access their personal finance dashboard. The page uses a dark, professional financial theme with visually appealing lifestyle imagery representing common spending categories such as groceries, food, travel, shopping, and bills.
+The Expensepilot Login Page provides a clean, modern, and secure entry point for users to access their personal finance dashboard. The page uses a dark, professional financial theme with visually appealing lifestyle imagery representing common spending categories such as groceries, food, travel, shopping, and bills.
 
 🔐 Key Features
 Secure Login: Users can enter their registered email address and password to access their account.
@@ -20,9 +20,9 @@ Spending Categories: Visual category indicators at the bottom represent areas su
 <img width="1907" height="962" alt="image" src="https://github.com/user-attachments/assets/b5281b55-042f-4b81-be7f-745af0aa7984" />
 
 
-📊 SpendWise Dashboard
+📊 ExpensePilot Dashboard
 
-The SpendWise Dashboard acts as the central financial management interface where users can monitor their income, expenses, savings, spending capacity, and overall financial position from a single screen.
+The Expensepilot Dashboard acts as the central financial management interface where users can monitor their income, expenses, savings, spending capacity, and overall financial position from a single screen.
 
 🏠 Dashboard Overview
 
